@@ -11,12 +11,12 @@
     <div class="container">
         <div class="row">
             <div class="col-12 areadiv" cmanOMat="area">
-                <table class="table table-bordered">
+                <table class="table table-bordered" id="heavyMap">
                     <thead>
                         <tr>
-                            <td scope="col"></td>
-                            <th scope="col">重要度高</th>
-                            <th scope="col">重要度低</th>
+                            <td scope="col" class="w-10"></td>
+                            <th scope="col" class="w-45">重要度高</th>
+                            <th scope="col" class="w-45">重要度低</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -31,15 +31,22 @@
                             <td></td>
                         </tr>
                     </tbody>
-                    <div class="movearea" cmanOMat="movearea" id="item1">hogehoge</div>
+                    <div class="movearea bg-warning rounded-lg p-2" cmanOMat="movearea" id="dropItem1" name="dropItem1">hogehoge</div>
                 </table>
+                <div class="form-inline">
+                    <input class="form-control" type="text" name="" id="addText" value="">
+                    <button type="button" class="btn btn-primary form-control" id="addTsk">タスク追加</button>
+                </div>
             </div>
         </div>
     </div>
     <div class="container">
         <div class="row">
             <div class="col-md-12" id="button_area">
-                <a href="#" download="output.txt" role="button" class="btn btn-primary" id="btn_output">Output</a>
+                <form action="/" method="POST">
+                    <input type="hidden" value="" id="saveItem1" name="saveItem1">
+                    <input type="submit" value="ファイル保存" class="btn btn-primary">
+                </form>
             </div>
         </div>
     </div>
