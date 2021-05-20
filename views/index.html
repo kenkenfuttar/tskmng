@@ -10,7 +10,7 @@
 <body>
     <div class="container">
         <div class="row">
-            <div class="col-12 areadiv" cmanOMat="area">
+            <div class="col-12 areadiv">
                 <table class="table table-bordered" id="heavyMap">
                     <thead>
                         <tr>
@@ -22,20 +22,45 @@
                     <tbody>
                         <tr>
                             <th><span class="vertical">緊急度高</span></th>
-                            <td></td>
-                            <td></td>
+                            <td id="heavyAndUrgent">
+                                <div class="bg-warning rounded-lg p-2" id="dropItem1" name="dropItem1">hogehoge</div>
+                            </td>
+                            <td id="unheavyAndUrgent"></td>
                         </tr>
                         <tr>
                             <th><span class="vertical">緊急度低</span></th>
-                            <td></td>
-                            <td></td>
+                            <td id="heavyAndUnurgent"></td>
+                            <td id="unheavyAndUnurgent"></td>
                         </tr>
                     </tbody>
-                    <div class="movearea bg-warning rounded-lg p-2" cmanOMat="movearea" id="dropItem1" name="dropItem1">hogehoge</div>
                 </table>
                 <div class="form-inline">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="heavyRadios" id="heavyRadios1" value="option1" checked="checked">
+                        <label class="form-check-label" for="heavyRadios1">
+                            重:高―緊:高
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="heavyRadios" id="heavyRadios2" value="option2">
+                        <label class="form-check-label" for="heavyRadios2">
+                            重:高―緊:低
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="heavyRadios" id="heavyRadios3" value="option3">
+                        <label class="form-check-label" for="heavyRadios3">
+                            重:低―緊:高
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="heavyRadios" id="heavyRadios4" value="option4">
+                        <label class="form-check-label" for="heavyRadios4">
+                            重:低―緊:低
+                        </label>
+                    </div>
                     <input class="form-control" type="text" name="" id="addText" value="">
-                    <button type="button" class="btn btn-primary form-control" id="addTsk">タスク追加</button>
+                    <button type="button" class="btn btn-primary form-control" id="btnAddTsk">タスク追加</button>
                 </div>
             </div>
         </div>
@@ -52,7 +77,6 @@
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
-    <script src=".\js\cmanObjMove_v091.js" charset="utf-8"></script>
     <script src=".\js\index.js" charset="utf-8"></script>
 </body>
 </html>
