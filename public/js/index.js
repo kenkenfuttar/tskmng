@@ -1,41 +1,72 @@
 $(function () {
 
-    $('#dropItem1').on('click', function () {
-        // TODO:削除予定
-        positionText();
+    const taskObj = {text: "", id: ""};
+    let idNumber = 0;
+    const taskArray = [];
+
+    $('#dropItem1').on('click', () => {
+
     });
 
-    var positionText = function () {
-        // 関数廃止
-    }
+    $('#btnAddTask').on('click', () => {
+        // radioボタン値の取得
+        const cellId = getCellId(getOption());
+        // 追加タスクのjsonオブジェクトを作る
+        createTaskObj();
+        addTask(cellId);
+        // submitのPOST内容に含めるために#formIndex内にinputのタグを作る
+        addInput();
+    });
 
-    $('#btnAddTsk').on('click', function () {
-        addTsk();
-    })
+    const getOption = () => {
+        const option = $('input[name="heavyRadios"]:checked').val();
+        return option;
+    };
 
-    var addTsk = function () {
-        var option = $('input[name="heavyRadios"]:checked').val();
+    const getCellId = (option) => {
+        let cellId = "";
         switch (option) {
             case "option1":
-                var id = "heavyAndUrgent";
+                cellId = "heavyAndUrgent";
                 break;
             case "option2":
-                var id = "heavyAndUnurgent";
+                cellId = "heavyAndUnurgent";
                 break;
             case "option3":
-                var id = "unheavyAndUrgent";
+                cellId = "unheavyAndUrgent";
                 break;
             case "option4":
-                var id = "unheavyAndUnurgent";
+                cellId = "unheavyAndUnurgent";
                 break;
         };
-        var addText = $('#addText').val();
-        
+        return cellId;
+    };
+
+    const createTaskObj = () => {
+        taskObj.text = $('#addText').val();
+        taskObj.id = idNumber++;
+        taskArray.push(taskObj);
+    };
+
+    const addTask = (cellId) => {
         // 新しいタグを作る
         $("<div>", {
-            id: 'item2',
-            text: addText,
+            id: 'cellItem' + taskObj.id,
+            text: taskObj.text,
             class: 'bg-warning rounded-lg p-2'
-        }).appendTo('#' + id);
-    }
+        }).appendTo('#' + cellId);
+    };
+
+    const addInput = () => {
+        $("<input>", {
+            id: 'inputItem' + taskObj.id,
+            name: 'inputItem',
+            value: JSON.stringify(taskObj),
+            type: 'hidden'
+        }).appendTo('#formIndex');
+    };
+
+    $('#btnSave').on('click', () => {
+        $('#formIndex').submit();
+    });
 });

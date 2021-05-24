@@ -16,24 +16,40 @@ app.get('/', (req, res) => {
 
 app.post('/', (req, res, next) => {
 
-    const left = req.body.saveItem1;
-    if (left == '') {
-        console.log("エラー");
-        res.redirect('/');
+    /*     const left = req.body.saveItem1;
+        if (left == '') {
+            console.log("エラー");
+            res.redirect('/');
+        } */
+    var inputItems = req.body.inputItem;
+    if (!Array.isArray(inputItems)) {
+        inputItems = Array(inputItems);
     }
-    console.log(left);
-
-    /*     fs.writeFile('.\\data\\out.txt', left, (err, data) => {
-            if (err) console.log(err);
-            else console.log('write end');
-        }); */
-
-    try {
-        fs.writeFileSync(".\\data\\out.txt", left);
-        console.log('write end');
-    } catch (e) {
-        console.log(e);
+    console.log(inputItems);
+    // シングルコートがあるとJSON.parseでエラーが出るため、取り除く
+    //var test = inputItems.replace('\'', '');
+    //console.log(test);
+    var json = [];
+    inputItems.forEach((value) => {
+        //var items = JSON.parse(value);
+        //console.log(items);
+        json.push(value);
     }
+    );
+    console.log(json);
+    console.log(JSON.stringify(json));
+    
+    fs.writeFile('.\\data\\out.txt', JSON.stringify(json), (err, data) => {
+        if (err) console.log(err);
+        else console.log('write end');
+    });
+
+    /*     try {
+            fs.writeFileSync(".\\data\\out.txt", left);
+            console.log('write end');
+        } catch (e) {
+            console.log(e);
+        } */
 
     res.redirect('/');
 });
