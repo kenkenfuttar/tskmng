@@ -1,6 +1,6 @@
 $(function () {
 
-    const taskObj = {text: "", id: ""};
+    const taskObj = { text: "", id: "" };
     let idNumber = 0;
     const taskArray = [];
 

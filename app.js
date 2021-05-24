@@ -11,34 +11,30 @@ app.use(express.static('public'));
 app.use(express.urlencoded({ extended: false }));
 
 app.get('/', (req, res) => {
-    res.render('index.html');
+    var json = JSON.parse(
+    fs.readFileSync('.\\data\\out.txt', 'utf-8', (err, data) => {
+        if (err) throw err;
+        console.log("data:" + data);
+    }));
+    console.log("parse:" + json);
+    res.render('index.ejs', {items: json});
 });
 
 app.post('/', (req, res, next) => {
 
-    /*     const left = req.body.saveItem1;
-        if (left == '') {
-            console.log("エラー");
-            res.redirect('/');
-        } */
     var inputItems = req.body.inputItem;
     if (!Array.isArray(inputItems)) {
         inputItems = Array(inputItems);
     }
-    console.log(inputItems);
-    // シングルコートがあるとJSON.parseでエラーが出るため、取り除く
-    //var test = inputItems.replace('\'', '');
-    //console.log(test);
+    // console.log(inputItems);
+
     var json = [];
     inputItems.forEach((value) => {
-        //var items = JSON.parse(value);
-        //console.log(items);
         json.push(value);
-    }
-    );
-    console.log(json);
-    console.log(JSON.stringify(json));
-    
+    });
+    // console.log(json);
+    // console.log(JSON.stringify(json));
+
     fs.writeFile('.\\data\\out.txt', JSON.stringify(json), (err, data) => {
         if (err) console.log(err);
         else console.log('write end');

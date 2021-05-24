@@ -72,6 +72,11 @@
                     <input type="hidden" value="" id="saveItem1" name="saveItem1">
                     <input type="button" value="ファイル保存" class="btn btn-primary" id="btnSave">
                 </form>
+                <ul>
+                <% items.forEach((item) => { %>
+                    <li><%= item.text %></li>
+                <%}); %>
+            </ul>
             </div>
         </div>
     </div>
