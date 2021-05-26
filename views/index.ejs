@@ -73,10 +73,11 @@
                     <input type="button" value="ファイル保存" class="btn btn-primary" id="btnSave">
                 </form>
                 <ul>
-                <% items.forEach((item) => { %>
-                    <li><%= item.text %></li>
-                <%}); %>
-            </ul>
+                    <% items.forEach((item) => { %>
+                        <% item = JSON.parse(item); %>
+                        <li><%= item.text %></li>
+                    <% }); %>
+                </ul>
             </div>
         </div>
     </div>

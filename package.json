@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -20,6 +20,12 @@
     "express": "^4.17.1",
     "fs": "0.0.1-security"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@babel/core": "^7.14.3",
+    "@babel/preset-env": "^7.14.2",
+    "babel-jest": "^27.0.1",
+    "babel-plugin-rewire": "^1.2.0",
+    "jest": "^27.0.1"
+  },
   "description": ""
 }
