@@ -1,4 +1,21 @@
-$(function () {
+'use strict';
+
+//import getOption from './indexFn.js';
+
+/* const { JSDOM } = require("jsdom");
+const { window } = new JSDOM("");
+const $ = require("jquery")(window); */
+
+const $ = require("jquery");
+
+const getOption = () => {
+    const option = $('input[name="heavyRadios"]:checked').val();
+    return option;
+}
+getOption;
+
+
+$(() => {
 
     const taskObj = { text: "", id: "" };
     let idNumber = 0;
@@ -9,6 +26,7 @@ $(function () {
     });
 
     $('#btnAddTask').on('click', () => {
+        alert('a');
         // radioボタン値の取得
         const cellId = getCellId(getOption());
         // 追加タスクのjsonオブジェクトを作る
@@ -18,10 +36,6 @@ $(function () {
         addInput();
     });
 
-    const getOption = () => {
-        const option = $('input[name="heavyRadios"]:checked').val();
-        return option;
-    };
 
     const getCellId = (option) => {
         let cellId = "";

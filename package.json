@@ -23,9 +23,15 @@
   "devDependencies": {
     "@babel/core": "^7.14.3",
     "@babel/preset-env": "^7.14.2",
+    "@testing-library/jest-dom": "^5.12.0",
     "babel-jest": "^27.0.1",
     "babel-plugin-rewire": "^1.2.0",
-    "jest": "^27.0.1"
+    "jest": "^27.0.1",
+    "jquery": "^3.6.0",
+    "jsdom": "^16.6.0"
   },
-  "description": ""
+  "description": "",
+  "jest": {
+    "testEnvironment": "jsdom"
+  }
 }
