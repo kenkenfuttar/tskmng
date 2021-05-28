@@ -10884,12 +10884,6 @@ return jQuery;
 },{}],2:[function(require,module,exports){
 'use strict';
 
-//import getOption from './indexFn.js';
-
-/* const { JSDOM } = require("jsdom");
-const { window } = new JSDOM("");
-const $ = require("jquery")(window); */
-
 const $ = require("jquery");
 
 const getOption = () => {
@@ -10910,7 +10904,6 @@ $(() => {
     });
 
     $('#btnAddTask').on('click', () => {
-        alert('a');
         // radioボタン値の取得
         const cellId = getCellId(getOption());
         // 追加タスクのjsonオブジェクトを作る

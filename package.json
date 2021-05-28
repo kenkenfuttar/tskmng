@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "browserify": "npm-run-all browserify:*",
+    "browserify:index": "browserify -o public/dest/index.js public/js/index.js"
   },
   "repository": {
     "type": "git",
@@ -26,13 +28,16 @@
     "@testing-library/jest-dom": "^5.12.0",
     "babel-jest": "^27.0.1",
     "babel-plugin-rewire": "^1.2.0",
-    "gulp": "^4.0.2",
     "jest": "^27.0.1",
     "jquery": "^3.6.0",
-    "jsdom": "^16.6.0"
+    "jsdom": "^16.6.0",
+    "vinyl-source-stream": "^2.0.0"
   },
-  "description": "",
   "jest": {
     "testEnvironment": "jsdom"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "description": ""
 }
