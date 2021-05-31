@@ -2,18 +2,40 @@
 
 const $ = require("jquery");
 
-const getOption = () => {
-    const option = $('input[name="heavyRadios"]:checked').val();
-    return option;
-}
-getOption;
+const taskObj = { text: "", id: "" , option: ""};
+let idNumber = 0;
+const taskArray = [];
 
+const getCellId = () => {
+    return $("input[name='heavyRadios']:checked").val();
+};
+
+const createTaskObj = (cellId) => {
+    taskObj.text = $('#addText').val();
+    taskObj.id = idNumber++;
+    taskObj.option = cellId;
+    taskArray.push(taskObj);
+};
+
+const addTask = (cellId) => {
+    // 新しいタグを作る
+    $("<div>", {
+        id: 'cellItem' + taskObj.id,
+        text: taskObj.text,
+        class: 'bg-warning rounded-lg p-2'
+    }).appendTo('#' + cellId);
+};
+
+const addInput = () => {
+    $("<input>", {
+        id: 'inputItem' + taskObj.id,
+        name: 'inputItem',
+        value: JSON.stringify(taskObj),
+        type: 'hidden'
+    }).appendTo('#formIndex');
+};
 
 $(() => {
-
-    const taskObj = { text: "", id: "" };
-    let idNumber = 0;
-    const taskArray = [];
 
     $('#dropItem1').on('click', () => {
 
@@ -21,59 +43,16 @@ $(() => {
 
     $('#btnAddTask').on('click', () => {
         // radioボタン値の取得
-        const cellId = getCellId(getOption());
+        const cellId = getCellId();
+        console.log(cellId);
         // 追加タスクのjsonオブジェクトを作る
-        createTaskObj();
+        createTaskObj(cellId);
         addTask(cellId);
         // submitのPOST内容に含めるために#formIndex内にinputのタグを作る
         addInput();
     });
 
-
-    const getCellId = (option) => {
-        let cellId = "";
-        switch (option) {
-            case "option1":
-                cellId = "heavyAndUrgent";
-                break;
-            case "option2":
-                cellId = "heavyAndUnurgent";
-                break;
-            case "option3":
-                cellId = "unheavyAndUrgent";
-                break;
-            case "option4":
-                cellId = "unheavyAndUnurgent";
-                break;
-        };
-        return cellId;
-    };
-
-    const createTaskObj = () => {
-        taskObj.text = $('#addText').val();
-        taskObj.id = idNumber++;
-        taskArray.push(taskObj);
-    };
-
-    const addTask = (cellId) => {
-        // 新しいタグを作る
-        $("<div>", {
-            id: 'cellItem' + taskObj.id,
-            text: taskObj.text,
-            class: 'bg-warning rounded-lg p-2'
-        }).appendTo('#' + cellId);
-    };
-
-    const addInput = () => {
-        $("<input>", {
-            id: 'inputItem' + taskObj.id,
-            name: 'inputItem',
-            value: JSON.stringify(taskObj),
-            type: 'hidden'
-        }).appendTo('#formIndex');
-    };
-
     $('#btnSave').on('click', () => {
-        $('#formIndex').submit();
+        $('#formIndex').trigger('submit');
     });
 });

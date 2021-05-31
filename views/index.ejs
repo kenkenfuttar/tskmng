@@ -20,6 +20,7 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <!-- TODO 各セルの配列に振り分ける-->
                         <tr>
                             <th><span class="vertical">緊急度高</span></th>
                             <td id="heavyAndUrgent">
@@ -36,25 +37,25 @@
                 </table>
                 <div class="form-inline">
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="heavyRadios" id="heavyRadios1" value="option1" checked="checked">
+                        <input class="form-check-input" type="radio" name="heavyRadios" id="heavyRadios1" value="heavyAndUrgent" checked="checked">
                         <label class="form-check-label" for="heavyRadios1">
                             重:高―緊:高
                         </label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="heavyRadios" id="heavyRadios2" value="option2">
+                        <input class="form-check-input" type="radio" name="heavyRadios" id="heavyRadios2" value="heavyAndUnurgent">
                         <label class="form-check-label" for="heavyRadios2">
                             重:高―緊:低
                         </label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="heavyRadios" id="heavyRadios3" value="option3">
+                        <input class="form-check-input" type="radio" name="heavyRadios" id="heavyRadios3" value="unheavyAndUrgent">
                         <label class="form-check-label" for="heavyRadios3">
                             重:低―緊:高
                         </label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="heavyRadios" id="heavyRadios4" value="option4">
+                        <input class="form-check-input" type="radio" name="heavyRadios" id="heavyRadios4" value="unheavyAndUnurgent">
                         <label class="form-check-label" for="heavyRadios4">
                             重:低―緊:低
                         </label>
@@ -73,8 +74,8 @@
                     <input type="button" value="ファイル保存" class="btn btn-primary" id="btnSave">
                 </form>
                 <ul>
+                    <!-- 書き方がダサい…どうにかならないものか… -->
                     <% if (!items[0]) { %>
-                        <!-- 書き方がダサい…どうにかならないものか… -->
                     <% } else { %>
                         <% items.forEach((item) => { %>
                             <% item = JSON.parse(item); %>
