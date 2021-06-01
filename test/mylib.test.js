@@ -1,4 +1,4 @@
-import { add, sub } from '../public/js/mylib';
+import { add } from '../public/js/mylib';
 
 test('add 1 + 2', () => {
   expect(add(1, 2)).toBe(3);

@@ -3,6 +3,10 @@ const fs = require('fs');
 
 const app = express();
 
+console.log(new Date());
+console.log(process.env.NODE_ENV);
+console.log(process.env.EXEMODE);
+
 app.set('view engine', 'ejs');
 
 app.engine('html', require('ejs').renderFile);
@@ -17,7 +21,7 @@ app.get('/', (req, res) => {
         console.log("data:" + data);
     }));
     console.log("parse:" + json);
-    res.render('index.ejs', {items: json});
+    res.render('index.ejs', {items: json, nodeEnv: process.env.NODE_ENV});
 });
 
 app.post('/', (req, res, next) => {
@@ -26,27 +30,17 @@ app.post('/', (req, res, next) => {
     if (!Array.isArray(inputItems)) {
         inputItems = Array(inputItems);
     }
-    // console.log(inputItems);
 
     var json = [];
     inputItems.forEach((value) => {
         json.push(value);
     });
-    // console.log(json);
-    // console.log(JSON.stringify(json));
 
     fs.writeFile('.\\data\\out.txt', JSON.stringify(json), (err, data) => {
         if (err) console.log(err);
         else console.log('write end');
     });
-
-    /*     try {
-            fs.writeFileSync(".\\data\\out.txt", left);
-            console.log('write end');
-        } catch (e) {
-            console.log(e);
-        } */
-
+    
     res.redirect('/');
 });
 
