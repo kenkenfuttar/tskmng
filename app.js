@@ -21,7 +21,10 @@ app.get('/', (req, res) => {
         console.log("data:" + data);
     }));
     console.log("parse:" + json);
-    res.render('index.ejs', {items: json, nodeEnv: process.env.NODE_ENV});
+    console.log(Array.isArray(json));
+    var jsonstr = JSON.stringify(json);
+    console.log(jsonstr);
+    res.render('index.ejs', {"items": jsonstr, "nodeEnv": process.env.NODE_ENV});
 });
 
 app.post('/', (req, res, next) => {

@@ -1,9 +1,15 @@
-var debugMode = (nodeEnv) => {
+'use strict';
+
+const debugMode = (nodeEnv) => {
     return (nodeEnv == 'development') ? true : false;
 };
 
-var log = (logText, logFlg) => {
+const log = (logText, logFlg) => {
     logFlg&&console.log(logText);
 };
 
-module.exports = {debugMode, log};
+const table = (logText, logFlg) => {
+    logFlg&&console.table(logText);
+};
+
+module.exports = {debugMode, log, table};

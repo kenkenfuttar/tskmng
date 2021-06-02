@@ -10895,7 +10895,7 @@ const consoleLog = require("./log.js");
 /**
  * @description タスク1つの内容
  */
-const task = { text: "", id: "", option: "" };
+let task = { "text": "", "id": "", "cellId": "" };
 
 /**
  * @description タスクのid管理
@@ -10922,12 +10922,19 @@ const getCellId = () => {
  * taskを作成、tasksに追加
  * @param {string} cellId radioボタンの選択
  */
-const createTask = (cellId) => {
+const createTaskForId = (cellId) => {
     task.text = $('#addText').val();
     task.id = idNumber++;
-    task.option = cellId;
+    task.cellId = cellId;
     tasks.push(task);
 };
+
+const createTaskForJSON = (item) => {
+    task.text = item.text;
+    task.id = idNumber++;
+    task.cellId = item.cellId;
+    tasks.push(task);
+}
 
 /**
  * taskをセルに追加する
@@ -10964,12 +10971,44 @@ $(() => {
 
     });
 
+    // TODO: ファイルから読み取った内容をセルに設定する
+    consoleLog.log("text :" + $('#items').text().toString(), logFlg);
+    const items = JSON.parse($('#items').text());
+
+    //const items = $('#items').text();
+    consoleLog.log("itemslength :" + items.length, logFlg);
+    if (!items[0]) {
+
+    } else {
+        items.forEach((item) => {
+            consoleLog.log(item, logFlg);
+            task = JSON.parse(item);
+            consoleLog.log("task.text:" + task.text, logFlg);
+            createTaskForJSON(task);
+            addTask(task.cellId);
+            addInput();
+            /*             $("<div>", {
+                            id: 'cellItem' + idNumber++,
+                            text: item.text,
+                            class: 'bg-warning rounded-lg p-2'
+                        }).appendTo('#' + item.option);
+                        $("<div>", {
+                            id: 'cellItem' + idNumber++,
+                            text: item.text,
+                            class: 'bg-warning rounded-lg p-2'
+                        }).appendTo('#' + item.option); */
+        });
+    }
+    //const items = JSON.parse($('#items').text());
+    //consoleLog.table(JSON.parse($('#items').text()), logFlg);
+
+
     $('#btnAddTask').on('click', () => {
         // radioボタン値の取得
         const cellId = getCellId();
         console.log(cellId);
         // 追加タスクのjsonオブジェクトを作る
-        createTask(cellId);
+        createTaskForId(cellId);
         addTask(cellId);
         // submitのPOST内容に含めるために#formIndex内にinputのタグを作る
         addInput();
@@ -10980,14 +11019,20 @@ $(() => {
     });
 });
 },{"./log.js":3,"jquery":1}],3:[function(require,module,exports){
-var debugMode = (nodeEnv) => {
+'use strict';
+
+const debugMode = (nodeEnv) => {
     return (nodeEnv == 'development') ? true : false;
 };
 
-var log = (logText, logFlg) => {
+const log = (logText, logFlg) => {
     logFlg&&console.log(logText);
 };
 
-module.exports = {debugMode, log};
+const table = (logText, logFlg) => {
+    logFlg&&console.table(logText);
+};
+
+module.exports = {debugMode, log, table};
 },{}]},{},[2])
 //# sourceMappingURL=index.js.map

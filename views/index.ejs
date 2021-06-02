@@ -20,7 +20,6 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- TODO 各セルの配列に振り分ける-->
                         <tr>
                             <th><span class="vertical">緊急度高</span></th>
                             <td id="heavyAndUrgent">
@@ -73,20 +72,12 @@
                     <input type="hidden" value="" id="saveItem1" name="saveItem1">
                     <input type="button" value="ファイル保存" class="btn btn-primary" id="btnSave">
                 </form>
-                <ul>
-                    <!-- 書き方がダサい…どうにかならないものか… -->
-                    <% if (!items[0]) { %>
-                    <% } else { %>
-                        <% items.forEach((item) => { %>
-                            <% item = JSON.parse(item); %>
-                            <li><%= item.text %></li>
-                        <% }); %>
-                    <% }; %>
-                    <% var nodeEnv = nodeEnv %>
-                    <li id="nodeEnv"><%= nodeEnv %></li>
-                </ul>
             </div>
         </div>
+    </div>
+    <div>
+        <div id="items"><%= items %></div>
+        <div id="nodeEnv"><%= nodeEnv %></div>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
