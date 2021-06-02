@@ -61,7 +61,7 @@ const addTask = (cellId) => {
     $("<div>", {
         id: 'cellItem' + task.id,
         text: task.text,
-        class: 'bg-warning rounded-lg p-2'
+        class: 'bg-warning rounded-lg p-2 m-1'
     }).appendTo('#' + cellId);
 };
 

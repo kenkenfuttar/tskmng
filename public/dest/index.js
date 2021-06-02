@@ -10945,7 +10945,7 @@ const addTask = (cellId) => {
     $("<div>", {
         id: 'cellItem' + task.id,
         text: task.text,
-        class: 'bg-warning rounded-lg p-2'
+        class: 'bg-warning rounded-lg p-2 m-1'
     }).appendTo('#' + cellId);
 };
 
@@ -10971,36 +10971,23 @@ $(() => {
 
     });
 
-    // TODO: ファイルから読み取った内容をセルに設定する
+    // ファイルから読み取った内容をセルに設定する
     consoleLog.log("text :" + $('#items').text().toString(), logFlg);
     const items = JSON.parse($('#items').text());
 
-    //const items = $('#items').text();
     consoleLog.log("itemslength :" + items.length, logFlg);
     if (!items[0]) {
 
     } else {
         items.forEach((item) => {
-            consoleLog.log(item, logFlg);
+            consoleLog.log("item:" + item, logFlg);
             task = JSON.parse(item);
             consoleLog.log("task.text:" + task.text, logFlg);
             createTaskForJSON(task);
             addTask(task.cellId);
             addInput();
-            /*             $("<div>", {
-                            id: 'cellItem' + idNumber++,
-                            text: item.text,
-                            class: 'bg-warning rounded-lg p-2'
-                        }).appendTo('#' + item.option);
-                        $("<div>", {
-                            id: 'cellItem' + idNumber++,
-                            text: item.text,
-                            class: 'bg-warning rounded-lg p-2'
-                        }).appendTo('#' + item.option); */
         });
     }
-    //const items = JSON.parse($('#items').text());
-    //consoleLog.table(JSON.parse($('#items').text()), logFlg);
 
 
     $('#btnAddTask').on('click', () => {

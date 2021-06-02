@@ -5,11 +5,11 @@ const debugMode = (nodeEnv) => {
 };
 
 const log = (logText, logFlg) => {
-    logFlg&&console.log(logText);
+    logFlg && console.log(logText);
 };
 
 const table = (logText, logFlg) => {
-    logFlg&&console.table(logText);
+    logFlg && console.table(logText);
 };
 
-module.exports = {debugMode, log, table};
+module.exports = { debugMode, log, table };
