@@ -4,10 +4,10 @@
 
     npm run exe
 
-    ブラウザで
+ブラウザで
     
     localhost:3000
     
-    にアクセス。
+にアクセス。
 
 動作確認はgoogle chromeのみ
