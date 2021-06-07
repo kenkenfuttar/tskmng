@@ -9,21 +9,28 @@ const $ = require("jquery");
 const consoleLog = require("./log.js");
 
 /**
+ * @type {{text: string, id: number, cellId: string}}
  * @description タスク1つの内容
  */
 let task = { "text": "", "id": "", "cellId": "" };
 
 /**
+ * @type {number}
  * @description タスクのid管理
  */
 let idNumber = 0;
 
 /**
- * @description 画面内のタスク
+ * @type {Array<task>}
+ * @description 画面内のタスクの配列
  */
 const tasks = [];
 
 // ログモード設定
+/**
+ * @type {boolean}
+ * @description package.jsonで設定されるNODE_ENVを判断してbool値にしたもの
+ */
 let logFlg = "";
 
 /**
@@ -45,6 +52,10 @@ const createTaskForId = (cellId) => {
     tasks.push(task);
 };
 
+/**
+ * taskオブジェクトから新たなtaskオブジェクトを作成する
+ * @param {{text: string, id: number, cellId: string}} item taskオブジェクト
+ */
 const createTaskForJSON = (item) => {
     task.text = item.text;
     task.id = idNumber++;
@@ -105,7 +116,9 @@ $(() => {
         });
     }
 
-
+    /**
+     * タスク追加ボタンクリックイベント
+     */
     $('#btnAddTask').on('click', () => {
         // radioボタン値の取得
         const cellId = getCellId();
@@ -117,6 +130,9 @@ $(() => {
         addInput();
     });
 
+    /**
+     * ファイル保存ボタンクリックイベント
+     */
     $('#btnSave').on('click', () => {
         $('#formIndex').trigger('submit');
     });

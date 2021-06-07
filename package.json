@@ -4,6 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
+    "coverage": "jest --coverage",
     "browserify": "npm-run-all browserify:*",
     "browserify:index": "browserify -o public/dest/index.js public/js/index.js",
     "debug": "SET NODE_ENV=development&&start.bat debug",
