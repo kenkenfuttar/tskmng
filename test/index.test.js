@@ -16,6 +16,10 @@ describe('getCellId', () => {
     test('createTaskForId', () => {
         const task = index.__get__('task');
         const tasks = index.__get__('tasks');
+        expect(task.text).toBe("");
+        expect(task.id).toBe("");
+        expect(task.cellId).toBe("");
+        expect(tasks).toHaveLength(0);
         document.body.innerHTML = '<input id="addText" value="test">';
         expect(createTaskForId("unheavyAndUrgent")).toBe();
         expect(task.text).toBe("test");
