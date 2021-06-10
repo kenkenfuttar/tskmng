@@ -83,12 +83,24 @@ describe('index.js_taskあり', () => {
 
     const addInput = index.__get__('addInput');
     test('testAddInput', () => {
+        
         document.body.innerHTML = '<div id="formIndex"></div>';
-        let expected = '<input id="inputItem0" name="inputItem" value="' + JSON.stringify(task) + '" type="hidden">';
         expect(addInput()).toBe();
-        let received = document.body.innerHTML.$('#formIndex').html();
-        console.log(received);
+        
+        // 結果の生成
+        let received = document.body.innerHTML.replace(/&quot;/g,"\"");
+        // 期待値の生成
+        let expected = '<div id="formIndex"><input id="inputItem0" name="inputItem" value="' + JSON.stringify(task) + '" type="hidden"></div>';
         console.log(expected);
+
+        // 比較の実施
         expect(received).toBe(expected);
-    })
+    });
+
+    test('testIndexReady', () => {
+        // expect(index.indexReady).toBe(expect.anything);
+        expect(index.indexReady()).toBeDefined();
+
+    });
+
 });

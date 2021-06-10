@@ -10893,21 +10893,28 @@ const $ = require("jquery");
 const consoleLog = require("./log.js");
 
 /**
+ * @type {{text: string, id: number, cellId: string}}
  * @description タスク1つの内容
  */
 let task = { "text": "", "id": "", "cellId": "" };
 
 /**
+ * @type {number}
  * @description タスクのid管理
  */
 let idNumber = 0;
 
 /**
- * @description 画面内のタスク
+ * @type {Array<task>}
+ * @description 画面内のタスクの配列
  */
 const tasks = [];
 
 // ログモード設定
+/**
+ * @type {boolean}
+ * @description package.jsonで設定されるNODE_ENVを判断してbool値にしたもの
+ */
 let logFlg = "";
 
 /**
@@ -10929,6 +10936,10 @@ const createTaskForId = (cellId) => {
     tasks.push(task);
 };
 
+/**
+ * taskオブジェクトから新たなtaskオブジェクトを作成する
+ * @param {{text: string, id: number, cellId: string}} item taskオブジェクト
+ */
 const createTaskForJSON = (item) => {
     task.text = item.text;
     task.id = idNumber++;
@@ -10961,15 +10972,11 @@ const addInput = () => {
     }).appendTo('#formIndex');
 };
 
-$(() => {
+var main = $(() => {
 
     // ログファイル設定
     logFlg = consoleLog.debugMode($('#nodeEnv').text());
     consoleLog.log('log', logFlg);
-
-    $('#dropItem1').on('click', () => {
-
-    });
 
     // ファイルから読み取った内容をセルに設定する
     consoleLog.log("text :" + $('#items').text().toString(), logFlg);
@@ -10989,7 +10996,9 @@ $(() => {
         });
     }
 
-
+    /**
+     * タスク追加ボタンクリックイベント
+     */
     $('#btnAddTask').on('click', () => {
         // radioボタン値の取得
         const cellId = getCellId();
@@ -11001,25 +11010,41 @@ $(() => {
         addInput();
     });
 
+    /**
+     * ファイル保存ボタンクリックイベント
+     */
     $('#btnSave').on('click', () => {
         $('#formIndex').trigger('submit');
     });
 });
 },{"./log.js":3,"jquery":1}],3:[function(require,module,exports){
-'use strict';
+/**
+ * @file log.js
+ */
 
+'use strict';
+/**
+ * package.jsonで設定されるNODE_ENVよりbool値を返す
+ * @param {string} nodeEnv package.jsonで設定されるNODE_ENV
+ * @returns {boolean} developmentの場合true
+ */
 const debugMode = (nodeEnv) => {
     return (nodeEnv == 'development') ? true : false;
 };
 
+/**
+ * コンソールにログを表示する
+ * @param {string} logText コンソールログ表示テキスト
+ * @param {boolean} logFlg trueの場合、ログを表示する。
+ */
 const log = (logText, logFlg) => {
-    logFlg&&console.log(logText);
+    logFlg && console.log(logText);
 };
 
 const table = (logText, logFlg) => {
-    logFlg&&console.table(logText);
+    logFlg && console.table(logText);
 };
 
-module.exports = {debugMode, log, table};
+module.exports = { debugMode, log, table };
 },{}]},{},[2])
 //# sourceMappingURL=index.js.map
