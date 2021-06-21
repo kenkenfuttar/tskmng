@@ -88,10 +88,10 @@ const addInput = () => {
     }).appendTo('#formIndex');
 };
 
-export var indexReady = $(() => {
+$(() => {
 
     // ログファイル設定
-    logFlg = consoleLog.debugMode($('#nodeEnv').text());
+    logFlg = consoleLog.debugMode($('#nodeEnv').text().trim());
     consoleLog.log('log', logFlg);
 
     // ファイルから読み取った内容をセルに設定する
