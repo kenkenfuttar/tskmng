@@ -6,7 +6,8 @@
 
 const $ = require("jquery");
 
-const consoleLog = require("./log.js");
+const log = require("./log.js");
+
 
 const index = require("./index.implement.js");
 
@@ -82,15 +83,9 @@ const addInput = () => {
 
 $(() => {
 
-// 条件式を満たす場合のみログを表示する
-const debugLog = (1==0)? console.log.bind(console) : ()=>{};
-
-// ログを出力したい箇所に記述
-debugLog("test");
-
     // ログファイル設定
-    const log = new consoleLog.consoleLog($('#nodeEnv').text().trim());
-    //consoleLog.setNodeEnv($('#nodeEnv').text().trim());
+    log.setNodeEnv($('#nodeEnv').text().trim());
+
     console.log('console.log');
     log.log('consoleLog.log');
 

@@ -10908,6 +10908,13 @@ let idNumber = 0;
  */
 const tasks = [];
 
+// ログモード設定
+/**
+ * @type {boolean}
+ * @description package.jsonで設定されるNODE_ENVを判断してbool値にしたもの
+ */
+let logFlg = "";
+
 /**
  * radioボタンの選択を取得
  * @returns {string} radioボタンの選択結果
@@ -10978,7 +10985,9 @@ addInput;
 
 const $ = require("jquery");
 
-const consoleLog = require("./log.js");
+// const consoleLog = require("./log.js").consoleLog;
+const log = require("./log.js");
+
 
 const index = require("./index.implement.js");
 
@@ -11001,13 +11010,6 @@ let idNumber = 0;
  * @description 画面内のタスクの配列
  */
 const tasks = [];
-
-// ログモード設定
-/**
- * @type {boolean}
- * @description package.jsonで設定されるNODE_ENVを判断してbool値にしたもの
- */
-let logFlg = "";
 
 /**
  * taskを作成、tasksに追加
@@ -11061,15 +11063,12 @@ const addInput = () => {
 
 $(() => {
 
-// 条件式を満たす場合のみログを表示する
-const debugLog = (1==0)? console.log.bind(console) : ()=>{};
-
-// ログを出力したい箇所に記述
-debugLog("test");
-
     // ログファイル設定
-    const log = new consoleLog.consoleLog($('#nodeEnv').text().trim());
-    //consoleLog.setNodeEnv($('#nodeEnv').text().trim());
+    // const log = new consoleLog($('#nodeEnv').text().trim());
+
+    log.setNodeEnv($('#nodeEnv').text().trim());
+    // console.log("getNodeEnv:" + log.getNodeEnv());
+
     console.log('console.log');
     log.log('consoleLog.log');
 
@@ -11118,28 +11117,40 @@ debugLog("test");
  */
 
 'use strict';
-class consoleLog{
-    constructor(nodeEnv) {
-        this.nodeEnv = nodeEnv;
-    };
+var nodeEnv;
 
-    log = (nodeEnv == 'development') ? console.log.bind(console) : () => {};
+const setNodeEnv = (pEnv) => {
+    nodeEnv = pEnv;
+    console.log(nodeEnv);
+}
 
-    table = (nodeEnv == 'development') ? console.table.bind(console) : () => {};
+const log = (text) => {
+    if (nodeEnv == 'development') {
+        console.log.bind(console.log(text));
+    } else {
+        console.log(nodeEnv == 'development');
+    }
+}
 
-};
+const table = (nodeEnv == 'development') ? console.table.bind(console) : () => { };
 
-module.exports = consoleLog;
+module.exports = { setNodeEnv, log, table };
 },{}],5:[function(require,module,exports){
 'use strict';
 class Task {
-    #text = "";
-    #id = 0;
-    #cellId = "";
     constructor(text, id, cellId) {
-        this.#text = text;
-        this.#id = id;
-        this.#cellId = cellId;
+        this.text = text;
+        this.id = id;
+        this.cellId = cellId;
+    }
+
+    addTask = () => {
+        // 新しいタグを作る
+        $("<div>", {
+            id: 'cellItem' + this.id,
+            text: this.text,
+            class: 'bg-warning rounded-lg p-2 m-1'
+        }).appendTo('#' + this.cellId);
     }
 }
 module.exports = Task;

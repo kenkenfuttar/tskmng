@@ -3,15 +3,21 @@
  */
 
 'use strict';
-class consoleLog{
-    constructor(nodeEnv) {
-        this.nodeEnv = nodeEnv;
-    };
+var nodeEnv;
 
-    log = (nodeEnv == 'development') ? console.log.bind(console) : () => {};
+const setNodeEnv = (pEnv) => {
+    nodeEnv = pEnv;
+    console.log(nodeEnv);
+}
 
-    table = (nodeEnv == 'development') ? console.table.bind(console) : () => {};
+const log = (text) => {
+    if (nodeEnv == 'development') {
+        console.log.bind(console.log(text));
+    } else {
+        console.log(nodeEnv == 'development');
+    }
+}
 
-};
+const table = (nodeEnv == 'development') ? console.table.bind(console) : () => { };
 
-module.exports = consoleLog;
+module.exports = { setNodeEnv, log, table };
