@@ -25,7 +25,7 @@ app.get('/', (req, res) => {
     console.log("parse:" + json);
     console.log(Array.isArray(json));
     var jsonstr = JSON.stringify(json); */
-    var jsonstr = JSON.stringify(file);
+    var jsonstr = JSON.stringify(JSON.parse(file));
     console.log(jsonstr);
     res.render('index.ejs', {"items": jsonstr, "nodeEnv": process.env.NODE_ENV});
 });
