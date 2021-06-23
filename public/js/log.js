@@ -3,26 +3,15 @@
  */
 
 'use strict';
-/**
- * package.jsonで設定されるNODE_ENVよりbool値を返す
- * @param {string} nodeEnv package.jsonで設定されるNODE_ENV
- * @returns {boolean} developmentの場合true
- */
-const debugMode = (nodeEnv) => {
-    return (nodeEnv == 'development') ? true : false;
+class consoleLog{
+    constructor(nodeEnv) {
+        this.nodeEnv = nodeEnv;
+    };
+
+    log = (nodeEnv == 'development') ? console.log.bind(console) : () => {};
+
+    table = (nodeEnv == 'development') ? console.table.bind(console) : () => {};
+
 };
 
-/**
- * コンソールにログを表示する
- * @param {string} logText コンソールログ表示テキスト
- * @param {boolean} logFlg trueの場合、ログを表示する。
- */
-const log = (logText, logFlg) => {
-    logFlg && console.log(logText);
-};
-
-const table = (logText, logFlg) => {
-    logFlg && console.table(logText);
-};
-
-module.exports = { debugMode, log, table };
+module.exports = consoleLog;

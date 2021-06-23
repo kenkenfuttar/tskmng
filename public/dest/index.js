@@ -10910,13 +10910,6 @@ let idNumber = 0;
  */
 const tasks = [];
 
-// ログモード設定
-/**
- * @type {boolean}
- * @description package.jsonで設定されるNODE_ENVを判断してbool値にしたもの
- */
-let logFlg = "";
-
 /**
  * radioボタンの選択を取得
  * @returns {string} radioボタンの選択結果
@@ -10974,22 +10967,30 @@ const addInput = () => {
 
 $(() => {
 
+// 条件式を満たす場合のみログを表示する
+const debugLog = (1==0)? console.log.bind(console) : ()=>{};
+
+// ログを出力したい箇所に記述
+debugLog("test");
+
     // ログファイル設定
-    logFlg = consoleLog.debugMode($('#nodeEnv').text().trim());
-    consoleLog.log('log', logFlg);
+    const log = new consoleLog.consoleLog($('#nodeEnv').text().trim());
+    //consoleLog.setNodeEnv($('#nodeEnv').text().trim());
+    console.log('console.log');
+    log.log('consoleLog.log');
 
     // ファイルから読み取った内容をセルに設定する
-    consoleLog.log("text :" + $('#items').text().toString(), logFlg);
+    log.log("text :" + $('#items').text().toString());
     const items = JSON.parse($('#items').text());
 
-    consoleLog.log("itemslength :" + items.length, logFlg);
+    log.log("itemslength :" + items.length);
     if (!items[0]) {
 
     } else {
         items.forEach((item) => {
-            consoleLog.log("item:" + item, logFlg);
+            log.log("item:" + item);
             task = JSON.parse(item);
-            consoleLog.log("task.text:" + task.text, logFlg);
+            log.log("task.text:" + task.text);
             createTaskForJSON(task);
             addTask(task.cellId);
             addInput();
@@ -11002,7 +11003,7 @@ $(() => {
     $('#btnAddTask').on('click', () => {
         // radioボタン値の取得
         const cellId = getCellId();
-        console.log(cellId);
+        consoleLog.log(cellId);
         // 追加タスクのjsonオブジェクトを作る
         createTaskForId(cellId);
         addTask(cellId);
@@ -11023,28 +11024,17 @@ $(() => {
  */
 
 'use strict';
-/**
- * package.jsonで設定されるNODE_ENVよりbool値を返す
- * @param {string} nodeEnv package.jsonで設定されるNODE_ENV
- * @returns {boolean} developmentの場合true
- */
-const debugMode = (nodeEnv) => {
-    return (nodeEnv == 'development') ? true : false;
+class consoleLog{
+    constructor(nodeEnv) {
+        this.nodeEnv = nodeEnv;
+    };
+
+    log = (nodeEnv == 'development') ? console.log.bind(console) : () => {};
+
+    table = (nodeEnv == 'development') ? console.table.bind(console) : () => {};
+
 };
 
-/**
- * コンソールにログを表示する
- * @param {string} logText コンソールログ表示テキスト
- * @param {boolean} logFlg trueの場合、ログを表示する。
- */
-const log = (logText, logFlg) => {
-    logFlg && console.log(logText);
-};
-
-const table = (logText, logFlg) => {
-    logFlg && console.table(logText);
-};
-
-module.exports = { debugMode, log, table };
+module.exports = consoleLog;
 },{}]},{},[2])
 //# sourceMappingURL=index.js.map
