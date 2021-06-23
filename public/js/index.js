@@ -8,6 +8,10 @@ const $ = require("jquery");
 
 const consoleLog = require("./log.js");
 
+const index = require("./index.implement.js");
+
+const Task = require("./task.js");
+
 /**
  * @type {{text: string, id: number, cellId: string}}
  * @description タスク1つの内容
@@ -27,14 +31,6 @@ let idNumber = 0;
 const tasks = [];
 
 /**
- * radioボタンの選択を取得
- * @returns {string} radioボタンの選択結果
- */
-const getCellId = () => {
-    return $("input[name='heavyRadios']:checked").val();
-};
-
-/**
  * taskを作成、tasksに追加
  * @param {string} cellId radioボタンの選択
  */
@@ -42,7 +38,10 @@ const createTaskForId = (cellId) => {
     task.text = $('#addText').val();
     task.id = idNumber++;
     task.cellId = cellId;
-    tasks.push(task);
+    const objTask = new Task(task.text, task.id, task.cellId);
+    console.log(objTask);
+    // tasks.push(task);
+    tasks.push(objTask);
 };
 
 /**
@@ -118,7 +117,7 @@ debugLog("test");
      */
     $('#btnAddTask').on('click', () => {
         // radioボタン値の取得
-        const cellId = getCellId();
+        const cellId = index.getCellId();
         consoleLog.log(cellId);
         // 追加タスクのjsonオブジェクトを作る
         createTaskForId(cellId);
