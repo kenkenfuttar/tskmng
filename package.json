@@ -10,7 +10,8 @@
     "debug": "SET NODE_ENV=development&&start.bat debug",
     "exe": "SET NODE_ENV=production&&start.bat exe",
     "browserify-d": "npm-run-all browserify-d:*",
-    "browserify-d:index": "browserify public/js/index.js --debug | exorcist public/dest/index.js.map > public/dest/index.js"
+    "browserify-d:index": "browserify public/js/index.js --debug | exorcist public/dest/index.js.map > public/dest/index.js",
+    "lint": "eslint src"
   },
   "repository": {
     "type": "git",
@@ -32,9 +33,12 @@
     "@babel/core": "^7.14.3",
     "@babel/preset-env": "^7.14.2",
     "@testing-library/jest-dom": "^5.12.0",
+    "babel-eslint": "^10.1.0",
     "babel-jest": "^27.0.1",
     "babel-plugin-rewire": "^1.2.0",
     "browserify": "^17.0.0",
+    "eslint": "^7.29.0",
+    "eslint-config-google": "^0.14.0",
     "exorcist": "^2.0.0",
     "jest": "^27.0.1",
     "jquery": "^3.6.0",

@@ -10888,13 +10888,13 @@ return jQuery;
 'use strict';
 
 
-const $ = require("jquery");
+const $ = require('jquery');
 
 /**
  * @type {{text: string, id: number, cellId: string}}
  * @description タスク1つの内容
  */
-let task = { "text": "", "id": "", "cellId": "" };
+const task = { 'text': '', 'id': '', 'cellId': '' };
 
 /**
  * @type {number}
@@ -10908,20 +10908,13 @@ let idNumber = 0;
  */
 const tasks = [];
 
-// ログモード設定
-/**
- * @type {boolean}
- * @description package.jsonで設定されるNODE_ENVを判断してbool値にしたもの
- */
-let logFlg = "";
-
 /**
  * radioボタンの選択を取得
- * @returns {string} radioボタンの選択結果
+ * @return {string} radioボタンの選択結果
  */
 const getCellId = () => {
     return $("input[name='heavyRadios']:checked").val();
-}
+};
 getCellId;
 exports.getCellId = getCellId;
 
@@ -10933,9 +10926,8 @@ const createTaskForId = (cellId) => {
     task.text = $('#addText').val();
     task.id = idNumber++;
     task.cellId = cellId;
-    
     tasks.push(task);
-}
+};
 createTaskForId;
 
 /**
@@ -10947,7 +10939,7 @@ const createTaskForJSON = (item) => {
     task.id = idNumber++;
     task.cellId = item.cellId;
     tasks.push(task);
-}
+};
 createTaskForJSON;
 
 /**
@@ -10956,26 +10948,27 @@ createTaskForJSON;
  */
 const addTask = (cellId) => {
     // 新しいタグを作る
-    $("<div>", {
+    $('<div>', {
         id: 'cellItem' + task.id,
         text: task.text,
-        class: 'bg-warning rounded-lg p-2 m-1'
+        class: 'bg-warning rounded-lg p-2 m-1',
     }).appendTo('#' + cellId);
-}
+};
 addTask;
 
 /**
  * taskをsubmit用に隠し項目として追加する
  */
 const addInput = () => {
-    $("<input>", {
+    $('<input>', {
         id: 'inputItem' + task.id,
         name: 'inputItem',
         value: JSON.stringify(task),
-        type: 'hidden'
+        type: 'hidden',
     }).appendTo('#formIndex');
-}
+};
 addInput;
+
 },{"jquery":1}],3:[function(require,module,exports){
 /**
  * @file index.js
@@ -10983,19 +10976,19 @@ addInput;
 'use strict';
 
 
-const $ = require("jquery");
+const $ = require('jquery');
 
-const clog = require("./log.js").log;
+const Clog = require('./log.js').Log;
 
-const index = require("./index.implement.js");
+const index = require('./index.implement.js');
 
-const Task = require("./task.js");
+const Task = require('./task.js');
 
 /**
  * @type {{text: string, id: number, cellId: string}}
  * @description タスク1つの内容
  */
-let task = { "text": "", "id": "", "cellId": "" };
+let task = { 'text': '', 'id': '', 'cellId': '' };
 
 /**
  * @type {number}
@@ -11032,7 +11025,7 @@ const createTaskForJSON = (item) => {
     task.id = idNumber++;
     task.cellId = item.cellId;
     tasks.push(task);
-}
+};
 
 /**
  * taskをセルに追加する
@@ -11040,10 +11033,10 @@ const createTaskForJSON = (item) => {
  */
 const addTask = (cellId) => {
     // 新しいタグを作る
-    $("<div>", {
+    $('<div>', {
         id: 'cellItem' + task.id,
         text: task.text,
-        class: 'bg-warning rounded-lg p-2 m-1'
+        class: 'bg-warning rounded-lg p-2 m-1',
     }).appendTo('#' + cellId);
 };
 
@@ -11051,32 +11044,30 @@ const addTask = (cellId) => {
  * taskをsubmit用に隠し項目として追加する
  */
 const addInput = () => {
-    $("<input>", {
+    $('<input>', {
         id: 'inputItem' + task.id,
         name: 'inputItem',
         value: JSON.stringify(task),
-        type: 'hidden'
+        type: 'hidden',
     }).appendTo('#formIndex');
 };
 
 $(() => {
-
     // ログファイル設定
-    const log = new clog();
+    const log = new Clog();
     console.log('console.log');
     log.log('consoleLog.log');
 
     // ファイルから読み取った内容をセルに設定する
     const items = JSON.parse($('#items').text());
 
-    //log.log("itemslength :" + items.length);
     if (!items[0]) {
 
     } else {
         items.forEach((item) => {
-            log.log("item:" + item);
+            log.log('item:' + item);
             task = JSON.parse(item);
-            log.log("task.text:" + task.text);
+            log.log('task.text:' + task.text);
             createTaskForJSON(task);
             addTask(task.cellId);
             addInput();
@@ -11104,6 +11095,7 @@ $(() => {
         $('#formIndex').trigger('submit');
     });
 });
+
 },{"./index.implement.js":2,"./log.js":4,"./task.js":5,"jquery":1}],4:[function(require,module,exports){
 /**
  * @file log.js
@@ -11111,36 +11103,64 @@ $(() => {
 
 'use strict';
 
-const log$ = require("jquery");
+const log$ = require('jquery');
 
-class log{
-    dev = 'development';
-    nodeEnv = log$('#nodeEnv').text().trim();
-    constructor(){
-        console.log(this.nodeEnv == this.dev);
-    };
+const dev = 'development';
+const nodeEnv = log$('#nodeEnv').text().trim();
 
-    log = (this.nodeEnv == this.dev) ? console.log.bind(console) : () => { };
+/**
+ * @class ログクラス
+ * @description console.logをラップして開発モードでのみconsole.logを出力するようにする。
+ */
+class Log {
+    /**
+     * @constructor 空のコンストラクター
+     */
+    constructor() { };
+
+    /**
+     * @example <caption>{string}</caption>
+     * log(hogehoge)
+     * @description this.nodeEnv == this.devがfalseになる場合logは出力されない。
+     */
+     log = (nodeEnv == dev) ? console.log.bind(console) : () => { };
 }
-module.exports.log = log;
+module.exports.Log = Log;
+
 },{"jquery":1}],5:[function(require,module,exports){
+/**
+ * @file task.js
+ */
 'use strict';
+/**
+ * @class Task
+ */
 class Task {
+    /**
+     * Taskコンストラクター
+     * @param {string} text タスクの表示内容
+     * @param {number} id 管理用ID
+     * @param {string} cellId 表示場所のID
+     */
     constructor(text, id, cellId) {
         this.text = text;
         this.id = id;
         this.cellId = cellId;
     }
 
-    addTask = () => {
+    /**
+     * @this Tasks
+     */
+    addTask() {
         // 新しいタグを作る
-        $("<div>", {
+        $('<div>', {
             id: 'cellItem' + this.id,
             text: this.text,
-            class: 'bg-warning rounded-lg p-2 m-1'
+            class: 'bg-warning rounded-lg p-2 m-1',
         }).appendTo('#' + this.cellId);
     }
 }
 module.exports = Task;
+
 },{}]},{},[3])
 //# sourceMappingURL=index.js.map

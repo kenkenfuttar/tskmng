@@ -1,8 +1,5 @@
-const { JSDOM } = require("jsdom");
-const { window } = new JSDOM("");
-const $ = require("jquery")(window);
 // 別ファイルからDOM要素を読み込むのに必要
-const fs = require("fs");
+const fs = require('fs');
 
 const index = require('../public/js/index.implement.js');
 
@@ -18,44 +15,42 @@ describe('index.js_taskなし', () => {
 
     afterEach(() => {
         index.__set__({
-            task: { text: "", id: "", cellId: "" },
+            task: { text: '', id: '', cellId: '' },
             tasks: [],
-            idNumber: 0
+            idNumber: 0,
         });
     });
 
-    document.body.innerHTML = fs.readFileSync(__dirname + "/index.test.html", { encoding: "utf-8" });
+    document.body.innerHTML = fs.readFileSync(__dirname + '/index.test.html',
+        { encoding: 'utf-8' });
     test('testGetCellId', () => {
         expect(index.getCellId()).toEqual('heavyAndUrgent');
     });
 
     const createTaskForId = index.__get__('createTaskForId');
     test('testCreateTaskForId', () => {
-        expect(task.text).toBe("");
-        expect(task.id).toBe("");
-        expect(task.cellId).toBe("");
+        expect(task.text).toBe('');
+        expect(task.id).toBe('');
+        expect(task.cellId).toBe('');
         expect(tasks).toHaveLength(0);
         document.body.innerHTML = '<input id="addText" value="test">';
-        
-        //expect(createTaskForId("unheavyAndUrgent")).toBe();
-        createTaskForId("unheavyAndUrgent");
+        createTaskForId('unheavyAndUrgent');
 
-        expect(task.text).toBe("test");
+        expect(task.text).toBe('test');
         expect(task.id).toBe(0);
-        expect(task.cellId).toBe("unheavyAndUrgent");
+        expect(task.cellId).toBe('unheavyAndUrgent');
         expect(tasks).toHaveLength(1);
     });
 
     const createTaskForJSON = index.__get__('createTaskForJSON');
     test('testCreateTaskForJSON', () => {
-        const item = { text: "test", id: "0", cellId: "hogehoge" };
-        expect(task.text).toBe("");
-        expect(task.id).toBe("");
-        expect(task.cellId).toBe("");
+        const item = { text: 'test', id: '0', cellId: 'hogehoge' };
+        expect(task.text).toBe('');
+        expect(task.id).toBe('');
+        expect(task.cellId).toBe('');
         expect(tasks).toHaveLength(0);
         document.body.innerHTML = '<input id="addText" value="test2">';
-        
-        //expect(createTaskForJSON(item)).toBe();
+
         createTaskForJSON(item);
 
         expect(task.text).toBe(item.text);
@@ -63,17 +58,15 @@ describe('index.js_taskなし', () => {
         expect(task.cellId).toBe(item.cellId);
         expect(tasks).toHaveLength(1);
     });
-
-
 });
 
 describe('index.js_taskあり', () => {
     beforeEach(() => {
-        task = { text: "index.js_taskあり", id: 0, cellId: "hogehoge" };
+        task = { text: 'index.js_taskあり', id: 0, cellId: 'hogehoge' };
         index.__set__({
             task: task,
             tasks: [task],
-            idNumber: 1
+            idNumber: 1,
         });
         task = index.__get__('task');
         tasks = index.__get__('tasks');
@@ -82,36 +75,33 @@ describe('index.js_taskあり', () => {
     const addTask = index.__get__('addTask');
     test('testAddTask', () => {
         document.body.innerHTML = '<div id="hogehoge"></div>';
-        //expect(addTask('hogehoge')).toBe();
         addTask('hogehoge');
-        expect(document.body.innerHTML).toBe('<div id="hogehoge"><div id="cellItem0" class="bg-warning rounded-lg p-2 m-1">index.js_taskあり</div></div>')
+        const expected =
+            '<div id="hogehoge">' +
+            '<div id="cellItem0" class="bg-warning rounded-lg p-2 m-1">' +
+            'index.js_taskあり' +
+            '</div>' +
+            '</div>';
+        expect(document.body.innerHTML).toBe(expected);
     });
 
     const addInput = index.__get__('addInput');
     test('testAddInput', () => {
-        
         document.body.innerHTML = '<div id="formIndex"></div>';
         addInput();
-        
+
         // 結果の生成
-        let received = document.body.innerHTML.replace(/&quot;/g,"\"");
+        const received = document.body.innerHTML.replace(/&quot;/g, '\"');
         // 期待値の生成
-        let expected = '<div id="formIndex"><input id="inputItem0" name="inputItem" value="' + JSON.stringify(task) + '" type="hidden"></div>';
+        const expected =
+            '<div id="formIndex">' +
+            '<input id="inputItem0" name="inputItem" value="' +
+            JSON.stringify(task) +
+            '" type="hidden">' +
+            '</div>';
         console.log(expected);
 
         // 比較の実施
         expect(received).toBe(expected);
     });
-
-    // test('testIndexReady', () => {
-    //     document.body.innerHTML = fs.readFileSync(__dirname + "/index.ejs", { encoding: "utf-8" });
-
-    //     // expect(index.indexReady).toBe(expect.anything);
-    //     var test = index.indexReady.ready();
-    //     console.log(test);
-            
-    //     expect(index.indexReady).toBeDefined();
-
-    // });
-
 });

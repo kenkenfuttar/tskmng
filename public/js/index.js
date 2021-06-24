@@ -4,19 +4,19 @@
 'use strict';
 
 
-const $ = require("jquery");
+const $ = require('jquery');
 
-const clog = require("./log.js").log;
+const Clog = require('./log.js').Log;
 
-const index = require("./index.implement.js");
+const index = require('./index.implement.js');
 
-const Task = require("./task.js");
+const Task = require('./task.js');
 
 /**
  * @type {{text: string, id: number, cellId: string}}
  * @description タスク1つの内容
  */
-let task = { "text": "", "id": "", "cellId": "" };
+let task = { 'text': '', 'id': '', 'cellId': '' };
 
 /**
  * @type {number}
@@ -53,7 +53,7 @@ const createTaskForJSON = (item) => {
     task.id = idNumber++;
     task.cellId = item.cellId;
     tasks.push(task);
-}
+};
 
 /**
  * taskをセルに追加する
@@ -61,10 +61,10 @@ const createTaskForJSON = (item) => {
  */
 const addTask = (cellId) => {
     // 新しいタグを作る
-    $("<div>", {
+    $('<div>', {
         id: 'cellItem' + task.id,
         text: task.text,
-        class: 'bg-warning rounded-lg p-2 m-1'
+        class: 'bg-warning rounded-lg p-2 m-1',
     }).appendTo('#' + cellId);
 };
 
@@ -72,32 +72,30 @@ const addTask = (cellId) => {
  * taskをsubmit用に隠し項目として追加する
  */
 const addInput = () => {
-    $("<input>", {
+    $('<input>', {
         id: 'inputItem' + task.id,
         name: 'inputItem',
         value: JSON.stringify(task),
-        type: 'hidden'
+        type: 'hidden',
     }).appendTo('#formIndex');
 };
 
 $(() => {
-
     // ログファイル設定
-    const log = new clog();
+    const log = new Clog();
     console.log('console.log');
     log.log('consoleLog.log');
 
     // ファイルから読み取った内容をセルに設定する
     const items = JSON.parse($('#items').text());
 
-    //log.log("itemslength :" + items.length);
     if (!items[0]) {
 
     } else {
         items.forEach((item) => {
-            log.log("item:" + item);
+            log.log('item:' + item);
             task = JSON.parse(item);
-            log.log("task.text:" + task.text);
+            log.log('task.text:' + task.text);
             createTaskForJSON(task);
             addTask(task.cellId);
             addInput();
