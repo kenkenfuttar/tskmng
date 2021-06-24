@@ -10,7 +10,7 @@ const $ = require('jquery');
  * @type {{text: string, id: number, cellId: string}}
  * @description タスク1つの内容
  */
-const task = { 'text': '', 'id': '', 'cellId': '' };
+const task = { text: '', id: '', cellId: '' };
 
 /**
  * @type {number}

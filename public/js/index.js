@@ -16,7 +16,7 @@ const Task = require('./task.js');
  * @type {{text: string, id: number, cellId: string}}
  * @description タスク1つの内容
  */
-let task = { 'text': '', 'id': '', 'cellId': '' };
+let task = { text: '', id: '', cellId: '' };
 
 /**
  * @type {number}
@@ -30,19 +30,19 @@ let idNumber = 0;
  */
 const tasks = [];
 
-/**
- * taskを作成、tasksに追加
- * @param {string} cellId radioボタンの選択
- */
-const createTaskForId = (cellId) => {
-    task.text = $('#addText').val();
-    task.id = idNumber++;
-    task.cellId = cellId;
-    const objTask = new Task(task.text, task.id, task.cellId);
-    console.log(objTask);
-    // tasks.push(task);
-    tasks.push(objTask);
-};
+// /**
+//  * taskを作成、tasksに追加
+//  * @param {string} cellId radioボタンの選択
+//  */
+// const createTaskForId = (cellId) => {
+//     task.text = $('#addText').val();
+//     task.id = idNumber++;
+//     task.cellId = cellId;
+//     const objTask = new Task(task.text, task.id, task.cellId);
+//     console.log(objTask);
+//     // tasks.push(task);
+//     tasks.push(objTask);
+// };
 
 /**
  * taskオブジェクトから新たなtaskオブジェクトを作成する
@@ -110,8 +110,10 @@ $(() => {
         const cellId = index.getCellId();
         log.log(cellId);
         // 追加タスクのjsonオブジェクトを作る
-        createTaskForId(cellId);
-        addTask(cellId);
+        // createTaskForId(cellId);
+        const task = new Task($('#addText').val(), idNumber++, cellId);
+        // addTask(cellId);
+        task.addTask();
         // submitのPOST内容に含めるために#formIndex内にinputのタグを作る
         addInput();
     });
