@@ -6,6 +6,7 @@
  * @class Task
  */
 class Task {
+    task = [];
     /**
      * Taskコンストラクター
      * @param {string} text タスクの表示内容
@@ -16,6 +17,9 @@ class Task {
         this.text = text;
         this.id = id;
         this.cellId = cellId;
+        this.task.text = this.text;
+        this.task.id = this.id;
+        this.task.cellId = this.cellId;
     }
 
     /**
@@ -29,5 +33,17 @@ class Task {
             class: 'bg-warning rounded-lg p-2 m-1',
         }).appendTo('#' + this.cellId);
     }
+
+    /**
+     * taskをsubmit用に隠し項目として追加する
+     */
+    addInput() {
+        $('<input>', {
+            id: 'inputItem' + this.id,
+            name: 'inputItem',
+            value: JSON.stringify(this.task),
+            type: 'hidden',
+        }).appendTo('#formIndex');
+    };
 }
 module.exports = Task;

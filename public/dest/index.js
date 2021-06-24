@@ -10988,7 +10988,7 @@ const Task = require('./task.js');
  * @type {{text: string, id: number, cellId: string}}
  * @description タスク1つの内容
  */
-let task = { text: '', id: '', cellId: '' };
+let objTask = { text: '', id: '', cellId: '' };
 
 /**
  * @type {number}
@@ -11016,41 +11016,41 @@ const tasks = [];
 //     tasks.push(objTask);
 // };
 
-/**
- * taskオブジェクトから新たなtaskオブジェクトを作成する
- * @param {{text: string, id: number, cellId: string}} item taskオブジェクト
- */
-const createTaskForJSON = (item) => {
-    task.text = item.text;
-    task.id = idNumber++;
-    task.cellId = item.cellId;
-    tasks.push(task);
-};
+// /**
+//  * taskオブジェクトから新たなtaskオブジェクトを作成する
+//  * @param {{text: string, id: number, cellId: string}} item taskオブジェクト
+//  */
+// const createTaskForJSON = (item) => {
+//     task.text = item.text;
+//     task.id = idNumber++;
+//     task.cellId = item.cellId;
+//     tasks.push(task);
+// };
 
-/**
- * taskをセルに追加する
- * @param {string} cellId radioボタンの選択
- */
-const addTask = (cellId) => {
-    // 新しいタグを作る
-    $('<div>', {
-        id: 'cellItem' + task.id,
-        text: task.text,
-        class: 'bg-warning rounded-lg p-2 m-1',
-    }).appendTo('#' + cellId);
-};
+// /**
+//  * taskをセルに追加する
+//  * @param {string} cellId radioボタンの選択
+//  */
+// const addTask = (cellId) => {
+//     // 新しいタグを作る
+//     $('<div>', {
+//         id: 'cellItem' + task.id,
+//         text: task.text,
+//         class: 'bg-warning rounded-lg p-2 m-1',
+//     }).appendTo('#' + cellId);
+// };
 
-/**
- * taskをsubmit用に隠し項目として追加する
- */
-const addInput = () => {
-    $('<input>', {
-        id: 'inputItem' + task.id,
-        name: 'inputItem',
-        value: JSON.stringify(task),
-        type: 'hidden',
-    }).appendTo('#formIndex');
-};
+// /**
+//  * taskをsubmit用に隠し項目として追加する
+//  */
+// const addInput = () => {
+//     $('<input>', {
+//         id: 'inputItem' + task.id,
+//         name: 'inputItem',
+//         value: JSON.stringify(task),
+//         type: 'hidden',
+//     }).appendTo('#formIndex');
+// };
 
 $(() => {
     // ログファイル設定
@@ -11066,11 +11066,13 @@ $(() => {
     } else {
         items.forEach((item) => {
             log.log('item:' + item);
-            task = JSON.parse(item);
+            objTask = JSON.parse(item);
+            const task = new Task(objTask.text, objTask.id, objTask);
             log.log('task.text:' + task.text);
-            createTaskForJSON(task);
-            addTask(task.cellId);
-            addInput();
+            // createTaskForJSON(task);
+            task.addTask();
+            task.addInput();
+            tasks.push(task);
         });
     }
 
@@ -11080,14 +11082,13 @@ $(() => {
     $('#btnAddTask').on('click', () => {
         // radioボタン値の取得
         const cellId = index.getCellId();
-        log.log(cellId);
         // 追加タスクのjsonオブジェクトを作る
-        // createTaskForId(cellId);
         const task = new Task($('#addText').val(), idNumber++, cellId);
-        // addTask(cellId);
+        log.log(cellId);
         task.addTask();
         // submitのPOST内容に含めるために#formIndex内にinputのタグを作る
-        addInput();
+        task.addInput();
+        tasks.push(task);
     });
 
     /**
@@ -11138,6 +11139,7 @@ module.exports.Log = Log;
  * @class Task
  */
 class Task {
+    task = [];
     /**
      * Taskコンストラクター
      * @param {string} text タスクの表示内容
@@ -11148,6 +11150,9 @@ class Task {
         this.text = text;
         this.id = id;
         this.cellId = cellId;
+        this.task.text = this.text;
+        this.task.id = this.id;
+        this.task.cellId = this.cellId;
     }
 
     /**
@@ -11159,8 +11164,20 @@ class Task {
             id: 'cellItem' + this.id,
             text: this.text,
             class: 'bg-warning rounded-lg p-2 m-1',
-        }).appendTo('#' + this.cellId);
+        }).appendTo("#" + this.cellId);
     }
+
+    /**
+     * taskをsubmit用に隠し項目として追加する
+     */
+    addInput() {
+        $('<input>', {
+            id: 'inputItem' + this.id,
+            name: 'inputItem',
+            value: JSON.stringify(this.task),
+            type: 'hidden',
+        }).appendTo('#formIndex');
+    };
 }
 module.exports = Task;
 
