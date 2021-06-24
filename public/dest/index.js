@@ -10985,9 +10985,7 @@ addInput;
 
 const $ = require("jquery");
 
-// const consoleLog = require("./log.js").consoleLog;
-const log = require("./log.js");
-
+const clog = require("./log.js").log;
 
 const index = require("./index.implement.js");
 
@@ -11064,19 +11062,14 @@ const addInput = () => {
 $(() => {
 
     // ログファイル設定
-    // const log = new consoleLog($('#nodeEnv').text().trim());
-
-    log.setNodeEnv($('#nodeEnv').text().trim());
-    // console.log("getNodeEnv:" + log.getNodeEnv());
-
+    const log = new clog();
     console.log('console.log');
     log.log('consoleLog.log');
 
     // ファイルから読み取った内容をセルに設定する
-    log.log("text :" + $('#items').text().toString());
     const items = JSON.parse($('#items').text());
 
-    log.log("itemslength :" + items.length);
+    //log.log("itemslength :" + items.length);
     if (!items[0]) {
 
     } else {
@@ -11096,7 +11089,7 @@ $(() => {
     $('#btnAddTask').on('click', () => {
         // radioボタン値の取得
         const cellId = index.getCellId();
-        consoleLog.log(cellId);
+        log.log(cellId);
         // 追加タスクのjsonオブジェクトを作る
         createTaskForId(cellId);
         addTask(cellId);
@@ -11117,25 +11110,20 @@ $(() => {
  */
 
 'use strict';
-var nodeEnv;
 
-const setNodeEnv = (pEnv) => {
-    nodeEnv = pEnv;
-    console.log(nodeEnv);
+const log$ = require("jquery");
+
+class log{
+    dev = 'development';
+    nodeEnv = log$('#nodeEnv').text().trim();
+    constructor(){
+        console.log(this.nodeEnv == this.dev);
+    };
+
+    log = (this.nodeEnv == this.dev) ? console.log.bind(console) : () => { };
 }
-
-const log = (text) => {
-    if (nodeEnv == 'development') {
-        console.log.bind(console.log(text));
-    } else {
-        console.log(nodeEnv == 'development');
-    }
-}
-
-const table = (nodeEnv == 'development') ? console.table.bind(console) : () => { };
-
-module.exports = { setNodeEnv, log, table };
-},{}],5:[function(require,module,exports){
+module.exports.log = log;
+},{"jquery":1}],5:[function(require,module,exports){
 'use strict';
 class Task {
     constructor(text, id, cellId) {

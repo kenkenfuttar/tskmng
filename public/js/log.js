@@ -3,21 +3,16 @@
  */
 
 'use strict';
-var nodeEnv;
 
-const setNodeEnv = (pEnv) => {
-    nodeEnv = pEnv;
-    console.log(nodeEnv);
+const log$ = require("jquery");
+
+class log{
+    dev = 'development';
+    nodeEnv = log$('#nodeEnv').text().trim();
+    constructor(){
+        console.log(this.nodeEnv == this.dev);
+    };
+
+    log = (this.nodeEnv == this.dev) ? console.log.bind(console) : () => { };
 }
-
-const log = (text) => {
-    if (nodeEnv == 'development') {
-        console.log.bind(console.log(text));
-    } else {
-        console.log(nodeEnv == 'development');
-    }
-}
-
-const table = (nodeEnv == 'development') ? console.table.bind(console) : () => { };
-
-module.exports = { setNodeEnv, log, table };
+module.exports.log = log;
