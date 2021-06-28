@@ -47,7 +47,6 @@ $(() => {
             objTask = JSON.parse(item);
             const task = new Task(objTask.text, objTask.id, objTask.cellId);
             log.log('task.text:' + task.text);
-            // createTaskForJSON(task);
             task.addTask();
             task.addInput();
             tasks.push(task);
