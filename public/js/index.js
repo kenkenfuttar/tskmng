@@ -30,56 +30,6 @@ let idNumber = 0;
  */
 const tasks = [];
 
-// /**
-//  * taskを作成、tasksに追加
-//  * @param {string} cellId radioボタンの選択
-//  */
-// const createTaskForId = (cellId) => {
-//     task.text = $('#addText').val();
-//     task.id = idNumber++;
-//     task.cellId = cellId;
-//     const objTask = new Task(task.text, task.id, task.cellId);
-//     console.log(objTask);
-//     // tasks.push(task);
-//     tasks.push(objTask);
-// };
-
-// /**
-//  * taskオブジェクトから新たなtaskオブジェクトを作成する
-//  * @param {{text: string, id: number, cellId: string}} item taskオブジェクト
-//  */
-// const createTaskForJSON = (item) => {
-//     task.text = item.text;
-//     task.id = idNumber++;
-//     task.cellId = item.cellId;
-//     tasks.push(task);
-// };
-
-// /**
-//  * taskをセルに追加する
-//  * @param {string} cellId radioボタンの選択
-//  */
-// const addTask = (cellId) => {
-//     // 新しいタグを作る
-//     $('<div>', {
-//         id: 'cellItem' + task.id,
-//         text: task.text,
-//         class: 'bg-warning rounded-lg p-2 m-1',
-//     }).appendTo('#' + cellId);
-// };
-
-// /**
-//  * taskをsubmit用に隠し項目として追加する
-//  */
-// const addInput = () => {
-//     $('<input>', {
-//         id: 'inputItem' + task.id,
-//         name: 'inputItem',
-//         value: JSON.stringify(task),
-//         type: 'hidden',
-//     }).appendTo('#formIndex');
-// };
-
 $(() => {
     // ログファイル設定
     const log = new Clog();
@@ -95,7 +45,7 @@ $(() => {
         items.forEach((item) => {
             log.log('item:' + item);
             objTask = JSON.parse(item);
-            const task = new Task(objTask.text, objTask.id, objTask);
+            const task = new Task(objTask.text, objTask.id, objTask.cellId);
             log.log('task.text:' + task.text);
             // createTaskForJSON(task);
             task.addTask();
