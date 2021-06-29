@@ -3,30 +3,34 @@ const fs = require('fs');
 
 const index = require('../public/js/index.implement.js');
 
-describe('index.implement1.js', () => {
-    document.body.innerHTML = fs.readFileSync(__dirname + '/index.test.html',
-        { encoding: 'utf-8' });
+const myDir = '/index.implement';
+
+describe('index.implement.js', () => {
     test('testGetCellId', () => {
+        document.body.innerHTML = fs.readFileSync(
+            __dirname + myDir + '/index.test.html',
+            { encoding: 'utf-8' });
         expect(index.getCellId()).toEqual('heavyAndUrgent');
     });
-});
 
-describe('index.implement2.js', () => {
-    document.body.innerHTML = fs.readFileSync(__dirname + '/index.test2.html',
-        { encoding: 'utf-8' });
     test('testGetCellId2', () => {
+        document.body.innerHTML = fs.readFileSync(
+            __dirname + myDir + '/index.test2.html',
+            { encoding: 'utf-8' });
         expect(index.getCellId()).toEqual('heavyAndUnurgent');
     });
 
-    document.body.innerHTML = fs.readFileSync(__dirname + '/index.test3.html',
-        { encoding: 'utf-8' });
     test('testGetCellId3', () => {
+        document.body.innerHTML = fs.readFileSync(
+            __dirname + myDir + '/index.test3.html',
+            { encoding: 'utf-8' });
         expect(index.getCellId()).toEqual('unheavyAndUrgent');
     });
 
-    document.body.innerHTML = fs.readFileSync(__dirname + '/index.test4.html',
-        { encoding: 'utf-8' });
     test('testGetCellId4', () => {
+        document.body.innerHTML = fs.readFileSync(
+            __dirname + myDir + '/index.test4.html',
+            { encoding: 'utf-8' });
         expect(index.getCellId()).toEqual('unheavyAndUnurgent');
     });
 });
