@@ -38,7 +38,7 @@ $(() => {
     const items = JSON.parse($('#items').text());
 
     if (!items[0]) {
-
+        log.log('記録タスクは0件です');
     } else {
         items.forEach((item) => {
             log.log('item:' + item);

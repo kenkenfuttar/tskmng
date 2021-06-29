@@ -1,7 +1,7 @@
-// const { json } = require('express');
 const express = require('express'),
     fs = require('fs'),
-    app = express();
+    app = express(),
+    dataDir = '.\\data';
 
 console.log(new Date());
 console.log(process.env.NODE_ENV);
@@ -15,17 +15,30 @@ app.use(express.static('public'));
 app.use(express.urlencoded({ extended: false }));
 
 app.get('/', (req, res) => {
-    const
-        readFileParam = {
-            encoding: 'utf-8',
-            flag: fs.constants.O_RDWR | fs.constants.O_CREAT,
-        },
-        file = fs.readFileSync('.\\data\\out.txt',
-            readFileParam, (err, data) => {
-                if (err) throw err;
-                console.log('data:' + data);
-            }),
-        jsonstr = JSON.stringify(JSON.parse(file));
+    // ディレクトリが存在しない場合は作成する。
+    if (!fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir, (err) => {
+            if (err) throw err;
+        });
+    }
+
+    // ファイルが存在しない場合は作成する。
+    const readFileParam = {
+        encoding: 'utf-8',
+        flag: fs.constants.O_RDWR | fs.constants.O_CREAT,
+    };
+    let file = fs.readFileSync(dataDir + '\\out.txt',
+        readFileParam, (err, data) => {
+            if (err) throw err;
+            console.log('data:' + data);
+        });
+
+    // fileが空だった場合は仮に設定する。
+    if (file == '') {
+        file = '[]';
+    }
+
+    const jsonstr = JSON.stringify(JSON.parse(file));
     console.log(jsonstr);
     res.render('index.ejs', {
         'items': jsonstr,
@@ -44,7 +57,7 @@ app.post('/', (req, res, next) => {
         json.push(value);
     });
 
-    fs.writeFile('.\\data\\out.txt', JSON.stringify(json), (err, data) => {
+    fs.writeFile(dataDir + '\\out.txt', JSON.stringify(json), (err, data) => {
         if (err) console.log(err);
         else console.log('write end');
     });
