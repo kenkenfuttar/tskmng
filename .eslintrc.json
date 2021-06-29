@@ -17,6 +17,7 @@
         "object-curly-spacing": ["error", "always", { "arraysInObjects": false }],
         "indent": ["error", 4],
         "quotes": ["error", "single", { "avoidEscape": true }],
-        "no-invalid-this": ["error", { "capIsConstructor": false }]
+        "no-invalid-this": ["error", { "capIsConstructor": false }],
+        "one-var": ["error", "consecutive"]
     }
 }

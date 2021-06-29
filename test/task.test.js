@@ -1,80 +1,64 @@
-const index = require('../public/js/task.js');
+'use strict';
 
-let task;
-let tasks;
+const Task = require('../public/js/task.js');
+// let task;
+// let tasks = [];
 
 
-describe('index.js_taskなし', () => {
+describe('task.js', () => {
+    let text, id, cellId, task;
     beforeEach(() => {
-        task = index.__get__('task');
-        tasks = index.__get__('tasks');
+        text = 'test';
+        id = 0;
+        cellId = 'unheavyAndUrgent';
+        task = new Task(text, id, cellId);
     });
-
     afterEach(() => {
-        index.__set__({
-            task: { text: '', id: '', cellId: '' },
-            tasks: [],
-            idNumber: 0,
-        });
+        task = null;
     });
 
-    // TODO: 代わりにコンストラクタのテストを実施する
-    const createTaskForId = index.__get__('createTaskForId');
-    test('testCreateTaskForId', () => {
-        expect(task.text).toBe('');
-        expect(task.id).toBe('');
-        expect(task.cellId).toBe('');
-        expect(tasks).toHaveLength(0);
-        document.body.innerHTML = '<input id="addText" value="test">';
-        createTaskForId('unheavyAndUrgent');
-
-        expect(task.text).toBe('test');
-        expect(task.id).toBe(0);
-        expect(task.cellId).toBe('unheavyAndUrgent');
-        expect(tasks).toHaveLength(1);
-    });
-});
-
-describe('index.js_taskあり', () => {
-    beforeEach(() => {
-        task = { text: 'index.js_taskあり', id: 0, cellId: 'hogehoge' };
-        index.__set__({
-            task: task,
-            tasks: [task],
-            idNumber: 1,
-        });
-        task = index.__get__('task');
-        tasks = index.__get__('tasks');
+    test('testConstructor', () => {
+        expect(task.text).toBe(text);
+        expect(task.id).toBe(id);
+        expect(task.cellId).toBe(cellId);
+        // TODO: 対応保留
+        // expect(task.task).toHaveLength(1);
+        expect(task.task.text).toBe(text);
+        expect(task.task.id).toBe(id);
+        expect(task.task.cellId).toBe(cellId);
     });
 
-    const addTask = index.__get__('addTask');
     test('testAddTask', () => {
-        document.body.innerHTML = '<div id="hogehoge"></div>';
-        addTask('hogehoge');
+        document.body.innerHTML = '<div id="unheavyAndUrgent"></div>';
+        task.addTask();
         const expected =
-            '<div id="hogehoge">' +
+            '<div id="unheavyAndUrgent">' +
             '<div id="cellItem0" class="bg-warning rounded-lg p-2 m-1">' +
-            'index.js_taskあり' +
+            'test' +
             '</div>' +
             '</div>';
         expect(document.body.innerHTML).toBe(expected);
     });
 
-    const addInput = index.__get__('addInput');
     test('testAddInput', () => {
+        console.log(task.task.text);
         document.body.innerHTML = '<div id="formIndex"></div>';
-        addInput();
+        task.addInput();
 
-        // 結果の生成
-        const received = document.body.innerHTML.replace(/&quot;/g, '\"');
-        // 期待値の生成
-        const expected =
-            '<div id="formIndex">' +
-            '<input id="inputItem0" name="inputItem" value="' +
-            JSON.stringify(task) +
-            '" type="hidden">' +
-            '</div>';
+        const
+            // 結果の生成
+            received = document.body.innerHTML.replace(/&quot;/g, '\"'),
+            // 期待値の生成
+            expected =
+                '<div id="formIndex">' +
+                '<input id="inputItem0" name="inputItem" value="' +
+                JSON.stringify(task.task) +
+                '" type="hidden">' +
+                '</div>';
+
+        console.log(received);
         console.log(expected);
+        console.log(task.task.text);
 
         // 比較の実施
         expect(received).toBe(expected);

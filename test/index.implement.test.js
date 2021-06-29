@@ -1,9 +1,7 @@
 // 別ファイルからDOM要素を読み込むのに必要
-const fs = require('fs');
-
-const index = require('../public/js/index.implement.js');
-
-const myDir = '/index.implement';
+const fs = require('fs'),
+    index = require('../public/js/index.implement.js'),
+    myDir = '/index.implement';
 
 describe('index.implement.js', () => {
     test('testGetCellId', () => {

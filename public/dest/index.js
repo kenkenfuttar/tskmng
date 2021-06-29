@@ -10891,24 +10891,6 @@ return jQuery;
 const $ = require('jquery');
 
 /**
- * @type {{text: string, id: number, cellId: string}}
- * @description タスク1つの内容
- */
-const task = { text: '', id: '', cellId: '' };
-
-/**
- * @type {number}
- * @description タスクのid管理
- */
-let idNumber = 0;
-
-/**
- * @type {Array<task>}
- * @description 画面内のタスクの配列
- */
-const tasks = [];
-
-/**
  * radioボタンの選択を取得
  * @return {string} radioボタンの選択結果
  */
@@ -10918,57 +10900,6 @@ const getCellId = () => {
 getCellId;
 exports.getCellId = getCellId;
 
-/**
- * taskを作成、tasksに追加
- * @param {string} cellId radioボタンの選択
- */
-const createTaskForId = (cellId) => {
-    task.text = $('#addText').val();
-    task.id = idNumber++;
-    task.cellId = cellId;
-    tasks.push(task);
-};
-createTaskForId;
-
-/**
- * taskオブジェクトから新たなtaskオブジェクトを作成する
- * @param {{text: string, id: number, cellId: string}} item taskオブジェクト
- */
-const createTaskForJSON = (item) => {
-    task.text = item.text;
-    task.id = idNumber++;
-    task.cellId = item.cellId;
-    tasks.push(task);
-};
-createTaskForJSON;
-
-/**
- * taskをセルに追加する
- * @param {string} cellId radioボタンの選択
- */
-const addTask = (cellId) => {
-    // 新しいタグを作る
-    $('<div>', {
-        id: 'cellItem' + task.id,
-        text: task.text,
-        class: 'bg-warning rounded-lg p-2 m-1',
-    }).appendTo('#' + cellId);
-};
-addTask;
-
-/**
- * taskをsubmit用に隠し項目として追加する
- */
-const addInput = () => {
-    $('<input>', {
-        id: 'inputItem' + task.id,
-        name: 'inputItem',
-        value: JSON.stringify(task),
-        type: 'hidden',
-    }).appendTo('#formIndex');
-};
-addInput;
-
 },{"jquery":1}],3:[function(require,module,exports){
 /**
  * @file index.js
@@ -10976,25 +10907,23 @@ addInput;
 'use strict';
 
 
-const $ = require('jquery');
+const $ = require('jquery'),
+    Clog = require('./log.js').Log,
+    index = require('./index.implement.js'),
+    Task = require('./task.js');
 
-const Clog = require('./log.js').Log;
 
-const index = require('./index.implement.js');
-
-const Task = require('./task.js');
-
-/**
- * @type {{text: string, id: number, cellId: string}}
- * @description タスク1つの内容
- */
-let objTask = { text: '', id: '', cellId: '' };
-
-/**
- * @type {number}
- * @description タスクのid管理
- */
-let idNumber = 0;
+let
+    /**
+     * @type {{text: string, id: number, cellId: string}}
+     * @description タスク1つの内容
+     */
+    objTask = { text: '', id: '', cellId: '' },
+    /**
+     * @type {number}
+     * @description タスクのid管理
+     */
+    idNumber = 0;
 
 /**
  * @type {Array<task>}
@@ -11019,7 +10948,6 @@ $(() => {
             objTask = JSON.parse(item);
             const task = new Task(objTask.text, objTask.id, objTask.cellId);
             log.log('task.text:' + task.text);
-            // createTaskForJSON(task);
             task.addTask();
             task.addInput();
             tasks.push(task);
@@ -11031,9 +10959,9 @@ $(() => {
      */
     $('#btnAddTask').on('click', () => {
         // radioボタン値の取得
-        const cellId = index.getCellId();
-        // 追加タスクのjsonオブジェクトを作る
-        const task = new Task($('#addText').val(), idNumber++, cellId);
+        const cellId = index.getCellId(),
+            // 追加タスクのjsonオブジェクトを作る
+            task = new Task($('#addText').val(), idNumber++, cellId);
         log.log(cellId);
         task.addTask();
         // submitのPOST内容に含めるために#formIndex内にinputのタグを作る
@@ -11085,11 +11013,12 @@ module.exports.Log = Log;
  * @file task.js
  */
 'use strict';
+const $ = require('jquery');
 /**
  * @class Task
  */
 class Task {
-    task = [];
+    task = {};
     /**
      * Taskコンストラクター
      * @param {string} text タスクの表示内容
@@ -11121,6 +11050,10 @@ class Task {
      * taskをsubmit用に隠し項目として追加する
      */
     addInput() {
+        console.table(this.task);
+        console.log(this.task);
+
+        console.log(JSON.stringify(this.task));
         $('<input>', {
             id: 'inputItem' + this.id,
             name: 'inputItem',
@@ -11131,5 +11064,5 @@ class Task {
 }
 module.exports = Task;
 
-},{}]},{},[3])
+},{"jquery":1}]},{},[3])
 //# sourceMappingURL=index.js.map

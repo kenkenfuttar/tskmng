@@ -4,25 +4,23 @@
 'use strict';
 
 
-const $ = require('jquery');
+const $ = require('jquery'),
+    Clog = require('./log.js').Log,
+    index = require('./index.implement.js'),
+    Task = require('./task.js');
 
-const Clog = require('./log.js').Log;
 
-const index = require('./index.implement.js');
-
-const Task = require('./task.js');
-
-/**
- * @type {{text: string, id: number, cellId: string}}
- * @description タスク1つの内容
- */
-let objTask = { text: '', id: '', cellId: '' };
-
-/**
- * @type {number}
- * @description タスクのid管理
- */
-let idNumber = 0;
+let
+    /**
+     * @type {{text: string, id: number, cellId: string}}
+     * @description タスク1つの内容
+     */
+    objTask = { text: '', id: '', cellId: '' },
+    /**
+     * @type {number}
+     * @description タスクのid管理
+     */
+    idNumber = 0;
 
 /**
  * @type {Array<task>}
@@ -58,9 +56,9 @@ $(() => {
      */
     $('#btnAddTask').on('click', () => {
         // radioボタン値の取得
-        const cellId = index.getCellId();
-        // 追加タスクのjsonオブジェクトを作る
-        const task = new Task($('#addText').val(), idNumber++, cellId);
+        const cellId = index.getCellId(),
+            // 追加タスクのjsonオブジェクトを作る
+            task = new Task($('#addText').val(), idNumber++, cellId);
         log.log(cellId);
         task.addTask();
         // submitのPOST内容に含めるために#formIndex内にinputのタグを作る

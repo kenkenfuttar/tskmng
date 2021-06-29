@@ -1,8 +1,7 @@
 // const { json } = require('express');
-const express = require('express');
-const fs = require('fs');
-
-const app = express();
+const express = require('express'),
+    fs = require('fs'),
+    app = express();
 
 console.log(new Date());
 console.log(process.env.NODE_ENV);
@@ -16,16 +15,17 @@ app.use(express.static('public'));
 app.use(express.urlencoded({ extended: false }));
 
 app.get('/', (req, res) => {
-    const file = fs.readFileSync('.\\data\\out.txt',
-        {
+    const
+        readFileParam = {
             encoding: 'utf-8',
             flag: fs.constants.O_RDWR | fs.constants.O_CREAT,
-        }, (err, data) => {
-            if (err) throw err;
-            console.log('data:' + data);
-        });
-
-    const jsonstr = JSON.stringify(JSON.parse(file));
+        },
+        file = fs.readFileSync('.\\data\\out.txt',
+            readFileParam, (err, data) => {
+                if (err) throw err;
+                console.log('data:' + data);
+            }),
+        jsonstr = JSON.stringify(JSON.parse(file));
     console.log(jsonstr);
     res.render('index.ejs', {
         'items': jsonstr,

@@ -2,11 +2,12 @@
  * @file task.js
  */
 'use strict';
+const $ = require('jquery');
 /**
  * @class Task
  */
 class Task {
-    task = [];
+    task = {};
     /**
      * Taskコンストラクター
      * @param {string} text タスクの表示内容
@@ -38,6 +39,10 @@ class Task {
      * taskをsubmit用に隠し項目として追加する
      */
     addInput() {
+        console.table(this.task);
+        console.log(this.task);
+
+        console.log(JSON.stringify(this.task));
         $('<input>', {
             id: 'inputItem' + this.id,
             name: 'inputItem',
