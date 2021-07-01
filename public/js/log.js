@@ -6,8 +6,8 @@
 
 const log$ = require('jquery');
 
-const dev = 'development';
-const nodeEnv = log$('#nodeEnv').text().trim();
+const dev = 'development',
+    nodeEnv = log$('#nodeEnv').text().trim();
 
 /**
  * @class ログクラス
@@ -24,6 +24,6 @@ class Log {
      * log(hogehoge)
      * @description this.nodeEnv == this.devがfalseになる場合logは出力されない。
      */
-     log = (nodeEnv == dev) ? console.log.bind(console) : () => { };
+    log = (nodeEnv == dev) ? console.log.bind(console) : () => { };
 }
 module.exports.Log = Log;
