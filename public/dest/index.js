@@ -11053,10 +11053,32 @@ class Task {
                 clone = template.content.cloneNode(true);
 
             body.prepend(clone);
-            // 複製したidの書き換え
+            // 複製した内容の書き換え
             $('#' + 'modal' + 'n').attr('id', this.modalId);
             $('#' + deleteCheck).attr('id', deleteCheck + this.id);
             $('label .form-check-label').attr('for', deleteCheck + this.id);
+            // TODO: もう少し効率よく書けそう
+            switch (this.cellId) {
+                case 'heavyAndUrgent':
+                    break;
+                case 'heavyAndUnurgent':
+                    $('#' + this.modalId + ' ' + '.urgent')
+                        .addClass('bg-white border border-danger text-dark');
+                    break;
+                case 'unheavyAndUrgent':
+                    $('#' + this.modalId + ' ' + '.heavy')
+                        .addClass('bg-white border border-warning');
+                    break;
+                case 'unheavyAndUnurgent':
+                    $('#' + this.modalId + ' ' + '.urgent')
+                        .addClass('bg-white border border-danger text-dark');
+                    $('#' + this.modalId + ' ' + '.heavy')
+                        .addClass('bg-white border border-warning');
+                    break;
+                default:
+                    break;
+            }
+            $('#' + this.modalId + ' ' + 'form-control').val(this.text);
         } else {
             console.log('対応してないよ');
         }
@@ -11081,6 +11103,14 @@ class Task {
             // inputのタグを削除
             $('#' + 'inputItem' + this.id).remove();
         });
+
+        // TODO: SaveChangesタスクの内容を書き換える
+
+        // TODO: Close時未保存の内容があれば警告する
+        $('body').on('click', '#' + this.modalId + ' ' + '.btn-secondary', () => {
+            $('#' + this.modalId + ' ' + '.btn-secondary').removeAttr('data-dismiss');
+            alert('a');
+        });
     };
 
     /**
@@ -11103,6 +11133,7 @@ class Task {
      * @this Tasks
      */
     addTask() {
+        const deleteCheck = 'deleteCheck';
         // 新しいタグを作る
         $('<div>', {
             'id': this.cellItemId,
@@ -11115,6 +11146,11 @@ class Task {
 
         this.addModal();
         this.addInput();
+
+        // modalを開いたときは必ず非チェック状態とする
+        $('#' + this.cellId).on('click', '#' + this.cellItemId, () => {
+            $('#' + deleteCheck + this.id).prop('checked', false);
+        });
     }
 }
 module.exports = Task;

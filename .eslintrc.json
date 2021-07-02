@@ -15,7 +15,7 @@
     "rules": {
         "linebreak-style": ["error", "windows"],
         "object-curly-spacing": ["error", "always", { "arraysInObjects": false }],
-        "indent": ["error", 4],
+        "indent": ["error", 4, { "SwitchCase": 1 }],
         "quotes": ["error", "single", { "avoidEscape": true }],
         "no-invalid-this": ["error", { "capIsConstructor": false }],
         "one-var": ["error", "consecutive"]

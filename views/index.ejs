@@ -93,10 +93,20 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Modal title</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h5 class="modal-title">
+                        <span class="badge badge-pill badge-warning heavy">重要</span>
+                        <span class="badge badge-pill badge-danger urgent">緊急</span>
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
                 <div class="modal-body">
-                    <p>Modal body text goes here.</p>
+                    <form>
+                        <div class="form-group">
+                            <input type="text" class="form-control" value="Modal body text goes here.">
+                        </div>
+                    </form>
                 </div>
                 <div class="modal-footer">
                     <form>
