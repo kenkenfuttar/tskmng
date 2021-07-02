@@ -43,10 +43,10 @@ $(() => {
         items.forEach((item) => {
             log.log('item:' + item);
             objTask = JSON.parse(item);
-            const task = new Task(objTask.text, objTask.id, objTask.cellId);
+            const task = new Task(objTask.text, idNumber++, objTask.cellId);
             log.log('task.text:' + task.text);
             task.addTask();
-            task.addInput();
+            // task.addInput();
             tasks.push(task);
         });
     }
@@ -62,7 +62,7 @@ $(() => {
         log.log(cellId);
         task.addTask();
         // submitのPOST内容に含めるために#formIndex内にinputのタグを作る
-        task.addInput();
+        // task.addInput();
         tasks.push(task);
     });
 

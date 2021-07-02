@@ -47,7 +47,7 @@ app.get('/', (req, res) => {
 });
 
 app.post('/', (req, res, next) => {
-    const inputItems = req.body.inputItem;
+    let inputItems = req.body.inputItem;
     if (!Array.isArray(inputItems)) {
         inputItems = Array(inputItems);
     }

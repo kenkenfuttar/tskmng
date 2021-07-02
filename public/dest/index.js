@@ -10946,10 +10946,10 @@ $(() => {
         items.forEach((item) => {
             log.log('item:' + item);
             objTask = JSON.parse(item);
-            const task = new Task(objTask.text, objTask.id, objTask.cellId);
+            const task = new Task(objTask.text, idNumber++, objTask.cellId);
             log.log('task.text:' + task.text);
             task.addTask();
-            task.addInput();
+            // task.addInput();
             tasks.push(task);
         });
     }
@@ -10965,7 +10965,7 @@ $(() => {
         log.log(cellId);
         task.addTask();
         // submitのPOST内容に含めるために#formIndex内にinputのタグを作る
-        task.addInput();
+        // task.addInput();
         tasks.push(task);
     });
 
@@ -11020,6 +11020,8 @@ const $ = require('jquery');
  */
 class Task {
     task = {};
+    cellItemId;
+    modalId;
     /**
      * Taskコンストラクター
      * @param {string} text タスクの表示内容
@@ -11033,79 +11035,52 @@ class Task {
         this.task.text = this.text;
         this.task.id = this.id;
         this.task.cellId = this.cellId;
+        this.cellItemId = 'cellItem' + this.id;
+        this.modalId = 'modal' + this.id;
     };
 
     /**
-     * @this Tasks
+     * addModal
      */
-    addTask() {
-        // 新しいタグを作る
-        $('<div>', {
-            'id': 'cellItem' + this.id,
-            'text': this.text,
-            'class': 'bg-warning rounded-lg p-2 m-1',
-            // モーダルダイアログを出すための属性
-            'data-toggle': 'modal',
-            'data-target': '#' + 'modal' + this.id,
-        }).appendTo('#' + this.cellId);
+    addModal() {
+        const deleteCheck = 'deleteCheck';
+        // bodyの直下にモーダル用のtemplateタグを作成する
+        // $('#' + 'templateTarget').load('.\\dest\\modalTemplate.html');
+        if ('content' in document.createElement('template')) {
+            console.log('対応しているよ');
+            const body = document.querySelector('body'),
+                template = document.querySelector('#modalTemplate'),
+                clone = template.content.cloneNode(true);
 
-        // $('#' + this.cellId).on('click', '#' + 'cellItem' + this.id, () => {
-        //     alert('クリックしたよ');
-        // });
+            body.prepend(clone);
+            // 複製したidの書き換え
+            $('#' + 'modal' + 'n').attr('id', this.modalId);
+            $('#' + deleteCheck).attr('id', deleteCheck + this.id);
+            $('label .form-check-label').attr('for', deleteCheck + this.id);
+        } else {
+            console.log('対応してないよ');
+        }
 
-        // bodyの直下にモーダル用のdivタグを作成する
-        $('<div>', {
-            id: 'modal' + this.id,
-            class: 'modal',
-            tabindex: '-1',
-        }).prependTo('body');
-        $('<div>', {
-            class: 'modal-dialog',
-        }).appendTo('#' + 'modal' + this.id);
-        $('<div>', {
-            class: 'modal-content',
-        }).appendTo('#' + 'modal' + this.id + ' ' + '.' + 'modal-dialog');
-
-        const modalContent = ['modal-header', 'modal-body', 'modal-footer'];
-        modalContent.forEach((value) => {
-            $('<div>', {
-                class: value,
-            }).appendTo('#' + 'modal' + this.id + ' ' + '.' + 'modal-content');
+        // check時にDeleteボタンが使えるようにする（checkしてないときは使えないようにする）
+        $('body').on('change', '#' + deleteCheck + this.id, () => {
+            const btnSelector = '#' + this.modalId + ' ' + '.btn-danger';
+            console.log(btnSelector);
+            if ($('#' + deleteCheck + this.id).prop('checked')) {
+                $(btnSelector).removeAttr('disabled');
+            } else {
+                $(btnSelector).attr('disabled', 'disabled');
+            };
         });
 
-        // modal-header
-        $('<h5>', {
-            class: 'modal-title',
-            text: 'Modal title',
-        }).appendTo('#' + 'modal' + this.id + ' ' + '.' + modalContent[0]);
-        $('<button>', {
-            'type': 'button',
-            'class': 'close',
-            'data-dismiss': 'modal',
-            'aria-label': 'Close',
-        }).appendTo('#' + 'modal' + this.id + ' ' + '.' + modalContent[0]);
-        $('<span>', {
-            'aria-hidden': 'true',
-            'html': '&times;',
-        }).appendTo('#' + 'modal' + this.id + ' ' + '.' + 'close');
-
-        // modal-body
-        $('<p>', {
-            text: 'Modal body text goes here.',
-        }).appendTo('#' + 'modal' + this.id + ' ' + '.' + modalContent[1]);
-
-        // modal-footer
-        $('<button>', {
-            'type': 'button',
-            'class': 'btn btn-secondary',
-            'data-dismiss': 'modal',
-            'text': 'Close',
-        }).appendTo('#' + 'modal' + this.id + ' ' + '.' + modalContent[2]);
-        $('<button>', {
-            type: 'button',
-            class: 'btn btn-primary',
-            text: 'Save changes',
-        }).appendTo('#' + 'modal' + this.id + ' ' + '.' + modalContent[2]);
+        // Deleteでデータを削除する
+        $('body').on('click', '#' + this.modalId + ' ' + '.btn-danger', () => {
+            // 一覧のデータを削除
+            $('#' + this.cellItemId).remove();
+            // modalのタグを削除
+            $('#' + this.modalId).remove();
+            // inputのタグを削除
+            $('#' + 'inputItem' + this.id).remove();
+        });
     };
 
     /**
@@ -11123,6 +11098,24 @@ class Task {
             type: 'hidden',
         }).appendTo('#formIndex');
     };
+
+    /**
+     * @this Tasks
+     */
+    addTask() {
+        // 新しいタグを作る
+        $('<div>', {
+            'id': this.cellItemId,
+            'text': this.text,
+            'class': 'bg-warning rounded-lg p-2 m-1',
+            // モーダルダイアログを出すための属性
+            'data-toggle': 'modal',
+            'data-target': '#' + this.modalId,
+        }).appendTo('#' + this.cellId);
+
+        this.addModal();
+        this.addInput();
+    }
 }
 module.exports = Task;
 
