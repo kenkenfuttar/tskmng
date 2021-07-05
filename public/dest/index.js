@@ -11095,7 +11095,7 @@ class Task {
         });
 
         // Deleteでデータを削除する
-        $('body').on('click', '#' + this.modalId + ' ' + '.btn-danger', () => {
+        $('body').on('click', '#' + this.modalId + ' ' + '.btnDelete', () => {
             // 一覧のデータを削除
             $('#' + this.cellItemId).remove();
             // modalのタグを削除
@@ -11107,9 +11107,36 @@ class Task {
         // TODO: SaveChangesタスクの内容を書き換える
 
         // TODO: Close時未保存の内容があれば警告する
-        $('body').on('click', '#' + this.modalId + ' ' + '.btn-secondary', () => {
-            $('#' + this.modalId + ' ' + '.btn-secondary').removeAttr('data-dismiss');
-            alert('a');
+        $('body').on('click', '#' + this.modalId + ' ' + '.btnClose', () => {
+            if ($('#' + this.modalId + ' ' + '.form-control').val() != this.text) {
+                console.log($('#' + this.modalId + ' ' + '.form-control').val());
+                console.log(this.text);
+                if ('content' in document.createElement('template')) {
+                    const
+                        modalContent = document.querySelector(
+                            '#' + this.modalId + ' .modal-content'),
+                        template = document.querySelector('#alertTemplate'),
+                        clone = template.content.cloneNode(true);
+
+                    modalContent.prepend(clone);
+                } else {
+                    console.log('対応してないよ');
+                }
+                $('#' + this.modalId + ' ' + '.btnClose').attr('disabled', 'disabled');
+                $('#' + this.modalId + ' ' + '.btnSave').attr('disabled', 'disabled');
+
+                $('body').on('click', '#' + this.modalId + ' ' + '.alertClose', () => {
+                    $('#' + this.modalId + ' ' + '.btnClose').removeAttr('disabled');
+                    $('#' + this.modalId + ' ' + '.btnSave').removeAttr('disabled');
+                });
+            } else {
+                $('#' + this.modalId)
+                    .hide()
+                    .removeClass('show')
+                    .removeAttr('aria-modal', 'role');
+                $('body').removeAttr('class');
+                $('.modal-backdrop').remove();
+            }
         });
     };
 
