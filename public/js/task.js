@@ -29,6 +29,19 @@ class Task {
     };
 
     /**
+     * modalを閉じる処理
+     * @this Task
+     */
+    closeModal() {
+        $('#' + this.modalId)
+            .hide()
+            .removeClass('show')
+            .removeAttr('aria-modal', 'role');
+        $('body').removeAttr('class');
+        $('.modal-backdrop').remove();
+    }
+
+    /**
      * addModal
      */
     addModal() {
@@ -110,25 +123,22 @@ class Task {
                 } else {
                     console.log('対応してないよ');
                 }
-                $('#' + this.modalId + ' ' + '.btnClose')
+                $('#' + this.modalId + ' .modal-footer .btn')
                     .attr('disabled', 'disabled');
-                $('#' + this.modalId + ' ' + '.btnSave')
+                $('#' + this.modalId + ' ' + 'form-check-input')
                     .attr('disabled', 'disabled');
 
                 $('body').on('click', '#' + this.modalId + ' ' + '.alertClose',
                     () => {
-                        $('#' + this.modalId + ' ' + '.btnClose')
-                            .removeAttr('disabled');
-                        $('#' + this.modalId + ' ' + '.btnSave')
+                        $('#' + this.modalId + ' .modal-footer .btn')
                             .removeAttr('disabled');
                     });
+                $('body').on('click', '#' + this.modalId + ' ' + '.modalClose',
+                    () => {
+                        this.closeModal();
+                    });
             } else {
-                $('#' + this.modalId)
-                    .hide()
-                    .removeClass('show')
-                    .removeAttr('aria-modal', 'role');
-                $('body').removeAttr('class');
-                $('.modal-backdrop').remove();
+                this.closeModal();
             }
         });
     };
@@ -156,12 +166,10 @@ class Task {
         const deleteCheck = 'deleteCheck';
         // 新しいタグを作る
         $('<div>', {
-            'id': this.cellItemId,
-            'text': this.text,
-            'class': 'bg-warning rounded-lg p-2 m-1',
+            id: this.cellItemId,
+            text: this.text,
+            class: 'bg-warning rounded-lg p-2 m-1',
             // モーダルダイアログを出すための属性
-            'data-toggle': 'modal',
-            'data-target': '#' + this.modalId,
         }).appendTo('#' + this.cellId);
 
         this.addModal();
@@ -169,6 +177,17 @@ class Task {
 
         // modalを開いたときは必ず非チェック状態とする
         $('#' + this.cellId).on('click', '#' + this.cellItemId, () => {
+            $('<div>', {
+                class: 'modal-backdrop show',
+            }).appendTo('body');
+            $('body').addClass('modal-open');
+            $('#' + this.modalId)
+                .show()
+                .addClass('show')
+                .attr({
+                    'role': 'dialog',
+                    'aria-modal': 'true',
+                });
             $('#' + deleteCheck + this.id).prop('checked', false);
         });
     }
