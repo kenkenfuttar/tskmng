@@ -2,7 +2,7 @@
     "version": 3,
     "mappings": "AAAA,AAAA,SAAS,CAAC;EACT,YAAY,EAAE,KAAK;EACnB,YAAY,EAAE,WAAW;EACzB,oBAAoB,EAAE,WAAW;EACjC,cAAc,EAAE,KAAK;CACrB;;AACD,AAAA,KAAK,CAAC;EACL,KAAK,EAAE,GAAG;CACV;;AACD,AAAA,KAAK,CAAC;EACL,KAAK,EAAE,GAAG;CACV;;AACD,AACC,kBADiB,CACjB,MAAM,CAAC;EACN,QAAQ,EAAE,QAAQ;EAClB,OAAO,EAAE,cAAc;EACvB,SAAS,EAAE,QAAQ;EACnB,WAAW,EAAE,GAAG;CAChB",
     "sources": [
-        "index.scss"
+        "../../scss/index.scss"
     ],
     "names": [],
     "file": "index.css"
