@@ -21,4 +21,8 @@
   font-size: 0.875rem;
   line-height: 1.5;
 }
+
+.modal-alert-success {
+  display: none;
+}
 /*# sourceMappingURL=index.css.map */

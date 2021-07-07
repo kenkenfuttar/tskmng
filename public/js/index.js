@@ -46,7 +46,6 @@ $(() => {
             const task = new Task(objTask.text, idNumber++, objTask.cellId);
             log.log('task.text:' + task.text);
             task.addTask();
-            // task.addInput();
             tasks.push(task);
         });
     }
@@ -62,7 +61,6 @@ $(() => {
         log.log(cellId);
         task.addTask();
         // submitのPOST内容に含めるために#formIndex内にinputのタグを作る
-        // task.addInput();
         tasks.push(task);
     });
 

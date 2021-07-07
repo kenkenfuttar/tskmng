@@ -10949,7 +10949,6 @@ $(() => {
             const task = new Task(objTask.text, idNumber++, objTask.cellId);
             log.log('task.text:' + task.text);
             task.addTask();
-            // task.addInput();
             tasks.push(task);
         });
     }
@@ -10965,7 +10964,6 @@ $(() => {
         log.log(cellId);
         task.addTask();
         // submitのPOST内容に含めるために#formIndex内にinputのタグを作る
-        // task.addInput();
         tasks.push(task);
     });
 
@@ -11025,6 +11023,7 @@ class Task {
     task = {};
     cellItemId;
     modalId;
+    saveFlg = false;
     /**
      * Taskコンストラクター
      * @param {string} text タスクの表示内容
@@ -11052,8 +11051,6 @@ class Task {
             '.modal-backdrop' + ',' +
             // Alerts
             '#' + this.modalId + ' ' + '.modal-alert';
-        // $('.modal-backdrop').remove();
-        // $('#' + this.modalId + ' ' + '.modal-alert').remove();
         $(removeObj).remove();
     }
 
@@ -11116,7 +11113,7 @@ class Task {
                 default:
                     break;
             }
-            $('#' + this.modalId + ' ' + 'form-control').val(this.text);
+            $('#' + this.modalId + ' ' + '.form-control').val(this.text);
         } else {
             console.log('対応してないよ');
         }
@@ -11141,7 +11138,15 @@ class Task {
             $removeObj.remove();
         });
 
-        // TODO: SaveChangesタスクの内容を書き換える
+        // SaveChangesタスクの内容を書き換える
+        $body.on('click', '#' + this.modalId + ' ' + '.btnSave', () => {
+            this.text = $('#' + this.modalId + ' ' + '.form-control').val();
+            this.task.text = this.text;
+            this.saveFlg = true;
+            $('#' + this.cellItemId).text(this.text);
+            $('#' + 'inputItem' + this.id).val(JSON.stringify(this.task));
+            $('.modal-alert-success').fadeIn(1000).delay(2000).fadeOut(2000);
+        });
 
         // Close時未保存の内容があれば警告する
         $body.on('click', '#' + this.modalId + ' ' + '.btnClose', () => {
@@ -11161,7 +11166,6 @@ class Task {
                 const btns = '#' + this.modalId + ' .modal-footer .btn',
                     chkDelete = '#' + this.modalId + ' ' + '.form-check-input',
                     $attrObj = $(btns + ',' + chkDelete);
-                // $(btns + ',' + chkDelete).attr('disabled', 'disabled');
                 $attrObj.attr('disabled', 'disabled');
 
                 /**
@@ -11219,6 +11223,8 @@ class Task {
             $('<div>', {
                 class: 'modal-backdrop show',
             }).appendTo('body');
+            // 保存成功アラートは消しておく
+            $('.modal-alert-success').hide();
             // modal画面の表示
             $('#' + this.modalId).show();
             // modalを開いたときは必ず非チェック状態とする
@@ -11227,10 +11233,10 @@ class Task {
             const $attrObj = $(
                 '#' + this.modalId + ' .modal-footer .btn' + ',' +
                 '#' + this.modalId + ' ' + '.form-check-input',
-            ),
-                btns = '#' + this.modalId + ' .modal-footer .btn',
-                chkDelete = '#' + this.modalId + ' ' + '.form-check-input';
+            );
             this.disabledBtnArea($attrObj);
+            $('#' + this.modalId + ' ' + '.form-control').val(this.text);
+            this.saveFlg = false;
         });
     }
 }
