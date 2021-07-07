@@ -103,7 +103,7 @@ class Task {
                 default:
                     break;
             }
-            $('#' + this.modalId + ' ' + 'form-control').val(this.text);
+            $('#' + this.modalId + ' ' + '.form-control').val(this.text);
         } else {
             console.log('対応してないよ');
         }
@@ -128,7 +128,14 @@ class Task {
             $removeObj.remove();
         });
 
-        // TODO: SaveChangesタスクの内容を書き換える
+        // SaveChangesタスクの内容を書き換える
+        $body.on('click', '#' + this.modalId + ' ' + '.btnSave', () => {
+            this.text = $('#' + this.modalId + ' ' + '.form-control').val();
+            this.task.text = this.text;
+            $('#' + this.cellItemId).text(this.text);
+            $('#' + 'inputItem' + this.id).val(JSON.stringify(this.task));
+            $('.modal-alert-success').fadeIn(1000).delay(2000).fadeOut(2000);
+        });
 
         // Close時未保存の内容があれば警告する
         $body.on('click', '#' + this.modalId + ' ' + '.btnClose', () => {
@@ -205,6 +212,8 @@ class Task {
             $('<div>', {
                 class: 'modal-backdrop show',
             }).appendTo('body');
+            // 保存成功アラートは消しておく
+            $('.modal-alert-success').hide();
             // modal画面の表示
             $('#' + this.modalId).show();
             // modalを開いたときは必ず非チェック状態とする
@@ -215,6 +224,7 @@ class Task {
                 '#' + this.modalId + ' ' + '.form-check-input',
             );
             this.disabledBtnArea($attrObj);
+            $('#' + this.modalId + ' ' + '.form-control').val(this.text);
         });
     }
 }
