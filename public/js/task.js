@@ -4,6 +4,9 @@
 'use strict';
 const $ = require('jquery');
 
+const deleteCheck = 'deleteCheck',
+    $body = $('body');
+
 /**
  * @class Task
  */
@@ -30,22 +33,42 @@ class Task {
 
     /**
      * modalを閉じる処理
-     * @this Task
      */
     closeModal() {
-        $('#' + this.modalId)
-            .hide()
-            .removeClass('show')
-            .removeAttr('aria-modal', 'role');
-        $('body').removeAttr('class');
-        $('.modal-backdrop').remove();
+        $('#' + this.modalId).hide();
+        const removeObj =
+            // 背景
+            '.modal-backdrop' + ',' +
+            // Alerts
+            '#' + this.modalId + ' ' + '.modal-alert';
+        $(removeObj).remove();
+    }
+
+    /**
+     * Deleteボタンを無効・有効化する
+     */
+    disabledDelete() {
+        const $btnDelete = $('#' + this.modalId + ' ' + '.btnDelete');
+        if ($('#' + deleteCheck + this.id).prop('checked')) {
+            $btnDelete.removeAttr('disabled');
+        } else {
+            $btnDelete.attr('disabled', 'disabled');
+        };
+    }
+
+    /**
+     * ボタン群を有効化する
+     * @param {string} $attrObj 有効化するオブジェクト
+     */
+    disabledBtnArea($attrObj) {
+        $attrObj.removeAttr('disabled');
+        this.disabledDelete();
     }
 
     /**
      * addModal
      */
     addModal() {
-        const deleteCheck = 'deleteCheck';
         // bodyの直下にモーダル用のtemplateタグを作成する
         // $('#' + 'templateTarget').load('.\\dest\\modalTemplate.html');
         if ('content' in document.createElement('template')) {
@@ -86,30 +109,29 @@ class Task {
         }
 
         // check時にDeleteボタンが使えるようにする（checkしてないときは使えないようにする）
-        $('body').on('change', '#' + deleteCheck + this.id, () => {
-            const btnSelector = '#' + this.modalId + ' ' + '.btn-danger';
-            console.log(btnSelector);
-            if ($('#' + deleteCheck + this.id).prop('checked')) {
-                $(btnSelector).removeAttr('disabled');
-            } else {
-                $(btnSelector).attr('disabled', 'disabled');
-            };
+        $body.on('change', '#' + deleteCheck + this.id, () => {
+            this.disabledDelete();
         });
 
         // Deleteでデータを削除する
-        $('body').on('click', '#' + this.modalId + ' ' + '.btnDelete', () => {
-            // 一覧のデータを削除
-            $('#' + this.cellItemId).remove();
-            // modalのタグを削除
-            $('#' + this.modalId).remove();
-            // inputのタグを削除
-            $('#' + 'inputItem' + this.id).remove();
+        $body.on('click', '#' + this.modalId + ' ' + '.btnDelete', () => {
+            const $removeObj = $(
+                // 一覧のタグ
+                '#' + this.cellItemId + ',' +
+                // modalのタグ
+                '#' + this.modalId + ',' +
+                // inputのタグ
+                '#' + 'inputItem' + this.id + ',' +
+                // 背景のタグ
+                '.modal-backdrop',
+            );
+            $removeObj.remove();
         });
 
         // TODO: SaveChangesタスクの内容を書き換える
 
         // Close時未保存の内容があれば警告する
-        $('body').on('click', '#' + this.modalId + ' ' + '.btnClose', () => {
+        $body.on('click', '#' + this.modalId + ' ' + '.btnClose', () => {
             if ($('#' + this.modalId + ' ' + '.form-control')
                 .val() != this.text) {
                 if ('content' in document.createElement('template')) {
@@ -123,20 +145,21 @@ class Task {
                 } else {
                     console.log('対応してないよ');
                 }
-                $('#' + this.modalId + ' .modal-footer .btn')
-                    .attr('disabled', 'disabled');
-                $('#' + this.modalId + ' ' + 'form-check-input')
-                    .attr('disabled', 'disabled');
+                const btns = '#' + this.modalId + ' .modal-footer .btn',
+                    chkDelete = '#' + this.modalId + ' ' + '.form-check-input',
+                    $attrObj = $(btns + ',' + chkDelete);
+                $attrObj.attr('disabled', 'disabled');
 
-                $('body').on('click', '#' + this.modalId + ' ' + '.alertClose',
-                    () => {
-                        $('#' + this.modalId + ' .modal-footer .btn')
-                            .removeAttr('disabled');
-                    });
-                $('body').on('click', '#' + this.modalId + ' ' + '.modalClose',
-                    () => {
-                        this.closeModal();
-                    });
+                /**
+                 * Alertsを解除時にボタンの有効無効を再設定
+                 */
+                $body.on('click', '#' + this.modalId + ' ' + '.alertClose',
+                    () => this.disabledBtnArea($attrObj));
+                /**
+                 * そのまま閉じる
+                 */
+                $body.on('click', '#' + this.modalId + ' ' + '.modalClose',
+                    () => this.closeModal());
             } else {
                 this.closeModal();
             }
@@ -163,7 +186,6 @@ class Task {
      * @this Tasks
      */
     addTask() {
-        const deleteCheck = 'deleteCheck';
         // 新しいタグを作る
         $('<div>', {
             id: this.cellItemId,
@@ -175,20 +197,24 @@ class Task {
         this.addModal();
         this.addInput();
 
-        // modalを開いたときは必ず非チェック状態とする
+        /**
+         * modalを開くときの処理
+         */
         $('#' + this.cellId).on('click', '#' + this.cellItemId, () => {
+            // 背景の設定
             $('<div>', {
                 class: 'modal-backdrop show',
             }).appendTo('body');
-            $('body').addClass('modal-open');
-            $('#' + this.modalId)
-                .show()
-                .addClass('show')
-                .attr({
-                    'role': 'dialog',
-                    'aria-modal': 'true',
-                });
+            // modal画面の表示
+            $('#' + this.modalId).show();
+            // modalを開いたときは必ず非チェック状態とする
             $('#' + deleteCheck + this.id).prop('checked', false);
+            // modalを開いたときはボタンは有効化する
+            const $attrObj = $(
+                '#' + this.modalId + ' .modal-footer .btn' + ',' +
+                '#' + this.modalId + ' ' + '.form-check-input',
+            );
+            this.disabledBtnArea($attrObj);
         });
     }
 }
