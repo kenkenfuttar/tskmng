@@ -9,49 +9,6 @@
     <link rel="stylesheet" href="./css/index.css">
 </head>
 <body>
-    <div>
-        <button data-toggle="modal" data-target='#myModal'>modalTest</button>
-    </div>
-    <div id="myModal" class="modal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                    <strong>Holy guacamole!</strong> You should check in on some of those fields below.
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-header">
-                    <h5 class="modal-title">
-                        <span class="badge badge-pill badge-warning heavy">重要</span>
-                        <span class="badge badge-pill badge-danger urgent">緊急</span>
-                    </h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="form-group">
-                            <input type="text" class="form-control" value="Modal body text goes here.">
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <form>
-                        <div class="form-group form-check m-0">
-                            <input type="checkbox" class="form-check-input" id="deleteCheck">
-                            <label class="form-check-label" for="deleteCheck">削除時</label>
-                        </div>
-                    </form>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal" disabled="disabled">Delete</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class="container">
         <div class="row">
             <div class="col-12 areadiv">
@@ -135,6 +92,7 @@
     <div id="modaln" class="modal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
+                <div class="modal-alert"></div>
                 <div class="modal-alert-success alert alert-success" role="alert">
                     保存しました.
                 </div>
@@ -168,7 +126,7 @@
 </template>
 
 <template id="alertTemplate">
-    <div class="modal-alert alert alert-warning alert-dismissible fade show align-middle" role="alert">
+    <div class="modal-alert-yesno alert alert-warning alert-dismissible align-middle" role="alert">
         変更せずに閉じますか？
         <button type="button" class="btn btn-sm close alertClose" data-dismiss="alert" aria-label="Alert Close">
             NO

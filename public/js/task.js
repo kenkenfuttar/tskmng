@@ -5,6 +5,7 @@
 const $ = require('jquery');
 
 const deleteCheck = 'deleteCheck',
+    $html = $('html'),
     $body = $('body');
 
 /**
@@ -35,13 +36,10 @@ class Task {
      * modalを閉じる処理
      */
     closeModal() {
-        $('#' + this.modalId).hide();
-        const removeObj =
-            // 背景
-            '.modal-backdrop' + ',' +
-            // Alerts
-            '#' + this.modalId + ' ' + '.modal-alert';
-        $(removeObj).remove();
+        $('#' + this.modalId + ',' + '.alert').hide();
+        // 背景削除
+        $('.modal-backdrop').remove();
+        $('.modal-alert').height(0);
     }
 
     /**
@@ -141,14 +139,31 @@ class Task {
         $body.on('click', '#' + this.modalId + ' ' + '.btnClose', () => {
             if ($('#' + this.modalId + ' ' + '.form-control')
                 .val() != this.text) {
+                const
+                    // 高さ関係の値を取得
+                    fontSize = Number($html.css('font-size').replace('px', '')),
+                    // Alertsのpadding高さ:規定font-size*0.75rem*2
+                    // 既定のfont-sizeから計算される付属のボタンサイズ
+                    //     Alertsに付属のボタンのpadding高さ:規定font-size*0.25rem*2
+                    //     付属のボタンの高さ:規定font-size*0.875rem*1.5
+                    //     borderの2
+                    responseHeight =
+                        fontSize * 0.75 * 2 +
+                        fontSize * (0.25 * 2 + 0.875 * 1.5) +
+                        2;
                 if ('content' in document.createElement('template')) {
                     const
-                        modalContent = document.querySelector(
-                            '#' + this.modalId + ' .modal-content'),
+                        // alertテンプレートの値を取得
+                        modalAlert = document.querySelector(
+                            '#' + this.modalId + ' .modal-alert'),
                         template = document.querySelector('#alertTemplate'),
                         clone = template.content.cloneNode(true);
-
-                    modalContent.prepend(clone);
+                    modalAlert.append(clone);
+                    $('.modal-alert').height(0)
+                        .animate({ height: responseHeight }, 1000);
+                    setTimeout(() => {
+                        $('.modal-alert-yesno').hide().fadeIn(300);
+                    }, 1000);
                 } else {
                     console.log('対応してないよ');
                 }
@@ -161,7 +176,13 @@ class Task {
                  * Alertsを解除時にボタンの有効無効を再設定
                  */
                 $body.on('click', '#' + this.modalId + ' ' + '.alertClose',
-                    () => this.disabledBtnArea($attrObj));
+                    () => {
+                        // modalのサイズを元に戻す。
+                        $('.modal-alert').height(responseHeight)
+                            .animate({ height: 0 }, 1000);
+                        // ボタンの有効化
+                        this.disabledBtnArea($attrObj);
+                    });
                 /**
                  * そのまま閉じる
                  */
