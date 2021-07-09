@@ -26,7 +26,15 @@
   display: none;
 }
 
-.modal-alert-yesno {
-  display: none;
+.alert-show {
+  height: 3.4375%;
+  -webkit-transition: height 2s 1s;
+  transition: height 2s 1s;
+}
+
+.alert-hide {
+  height: 0;
+  -webkit-transition: height 2s 1s;
+  transition: height 2s 1s;
 }
 /*# sourceMappingURL=index.css.map */

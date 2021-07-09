@@ -21,9 +21,9 @@
 .modal-alert-success {
 	display: none;
 }
-.modal-alert-yesno{
-	display: none;
-}
+// .modal-alert-yesno {
+// 	display: none;
+// }
 // Alertsのpadding高さ倍率
 $alert-padding-height: 0.75;
 // Alertのボタンサイズ
@@ -31,4 +31,11 @@ $alert-padding-height: 0.75;
 $alert-btn-padding-height: 0.25;
 // Alertsに付属のボタンの高さ倍率(fontSize倍率*高さ倍率)
 $alert-btn-height: 0.875 * 1.5;
-
+.alert-show {
+	height: ($alert-padding-height * 2 + ($alert-btn-padding-height * 2 + $alert-btn-height)+ 0.125) * 1%;
+	transition: height 2s 1s;
+}
+.alert-hide {
+	height: 0;
+	transition: height 2s 1s;
+}

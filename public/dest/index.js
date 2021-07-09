@@ -11048,7 +11048,7 @@ class Task {
         $('#' + this.modalId + ',' + '.alert').hide();
         // 背景削除
         $('.modal-backdrop').remove();
-        $('.modal-alert').height(0);
+        $('.modal-alert').removeClass('alert-hide').addClass('alert-show');
     }
 
     /**
@@ -11168,8 +11168,10 @@ class Task {
                         template = document.querySelector('#alertTemplate'),
                         clone = template.content.cloneNode(true);
                     modalAlert.append(clone);
-                    $('.modal-alert').height(0)
-                        .animate({ height: responseHeight }, 1000);
+                    $('.modal-alert-yesno').hide();
+                    // $('.modal-alert').height(0)
+                    //     .animate({ height: responseHeight }, 1000);
+                    $('.modal-alert').removeClass('alert-hide').addClass('alert-show');
                     setTimeout(() => {
                         $('.modal-alert-yesno').hide().fadeIn(300);
                     }, 1000);
@@ -11187,8 +11189,9 @@ class Task {
                 $body.on('click', '#' + this.modalId + ' ' + '.alertClose',
                     () => {
                         // modalのサイズを元に戻す。
-                        $('.modal-alert').height(responseHeight)
-                            .animate({ height: 0 }, 1000);
+                        // $('.modal-alert').height(responseHeight)
+                        //     .animate({ height: 0 }, 1000);
+                        $('.modal-alert').removeClass('alert-show').addClass('alert-hide');
                         // ボタンの有効化
                         this.disabledBtnArea($attrObj);
                     });
