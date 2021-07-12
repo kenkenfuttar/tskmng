@@ -47,4 +47,8 @@
   left: 400px;
   color: inherit;
 }
+
+.urgent {
+  cursor: pointer;
+}
 /*# sourceMappingURL=index.css.map */

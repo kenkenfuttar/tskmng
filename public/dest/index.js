@@ -11094,6 +11094,21 @@ class Task {
     }
 
     /**
+     * 緊急バッチの変更
+     * @param {boolean} urgent 変更後の緊急フラグ
+     */
+    changeUrgent(urgent) {
+        const $urgent = $('#' + this.modalId + ' ' + '.urgent'),
+            className = 'bg-white text-dark';
+        if (urgent) {
+            $urgent.removeClass(className);
+        } else {
+            $urgent.addClass(className);
+        }
+        this.cellId.urgent = urgent;
+    }
+
+    /**
      * addModal
      */
     addModal() {
@@ -11111,6 +11126,7 @@ class Task {
             $('#' + deleteCheck).attr('id', deleteCheck + this.id);
             $('label .form-check-label').attr('for', deleteCheck + this.id);
             // TODO: もう少し効率よく書けそう
+            // バッヂの設定
             if (this.cellId.heavy) {
                 if (!this.cellId.urgent) {
                     $('#' + this.modalId + ' ' + '.urgent')
@@ -11213,6 +11229,10 @@ class Task {
             } else {
                 this.closeModal();
             }
+        });
+
+        $('.urgent').on('click', () => {
+            this.changeUrgent(!this.cellId.urgent);
         });
     };
 
