@@ -12,10 +12,12 @@ const $ = require('jquery'),
 
 let
     /**
-     * @type {{text: string, id: number, cellId: string}}
+     * @type {{text: string,
+           id: number,
+           cellId: { heavy: boolean, urgent: boolean }}}
      * @description タスク1つの内容
      */
-    objTask = { text: '', id: '', cellId: '' },
+    objTask = { text: '', id: '', cellId: { heavy: '', urgent: '' } },
     /**
      * @type {number}
      * @description タスクのid管理

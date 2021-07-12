@@ -10892,10 +10892,30 @@ const $ = require('jquery');
 
 /**
  * radioボタンの選択を取得
- * @return {string} radioボタンの選択結果
+ * @return {{heavy: boolean, urgent: boolean}} radioボタンの選択結果
  */
 const getCellId = () => {
-    return $("input[name='heavyRadios']:checked").val();
+    // return $("input[name='heavyRadios']:checked").val();
+    const check = $("input[name='heavyRadios']:checked").val();
+    let heavy = true,
+        urgent = true;
+    switch (check) {
+        case 'heavyAndUrgent':
+            break;
+        case 'heavyAndUnurgent':
+            urgent = false;
+            break;
+        case 'unheavyAndUrgent':
+            heavy = false;
+            break;
+        case 'unheavyAndUnurgent':
+            heavy = false;
+            urgent = false;
+            break;
+        default:
+            break;
+    }
+    return { heavy: heavy, urgent: urgent };
 };
 getCellId;
 exports.getCellId = getCellId;
@@ -10915,10 +10935,12 @@ const $ = require('jquery'),
 
 let
     /**
-     * @type {{text: string, id: number, cellId: string}}
+     * @type {{text: string,
+           id: number,
+           cellId: { heavy: boolean, urgent: boolean }}}
      * @description タスク1つの内容
      */
-    objTask = { text: '', id: '', cellId: '' },
+    objTask = { text: '', id: '', cellId: { heavy: '', urgent: '' } },
     /**
      * @type {number}
      * @description タスクのid管理
@@ -11027,7 +11049,7 @@ class Task {
      * Taskコンストラクター
      * @param {string} text タスクの表示内容
      * @param {number} id 管理用ID
-     * @param {string} cellId 表示場所のID
+     * @param {{heavy: boolean, urgent: boolean}} cellId 表示場所のID
      */
     constructor(text, id, cellId) {
         this.text = text;
@@ -11089,25 +11111,21 @@ class Task {
             $('#' + deleteCheck).attr('id', deleteCheck + this.id);
             $('label .form-check-label').attr('for', deleteCheck + this.id);
             // TODO: もう少し効率よく書けそう
-            switch (this.cellId) {
-                case 'heavyAndUrgent':
-                    break;
-                case 'heavyAndUnurgent':
+            if (this.cellId.heavy) {
+                if (!this.cellId.urgent) {
                     $('#' + this.modalId + ' ' + '.urgent')
                         .addClass('bg-white border border-danger text-dark');
-                    break;
-                case 'unheavyAndUrgent':
+                }
+            } else {
+                if (this.cellId.urgent) {
                     $('#' + this.modalId + ' ' + '.heavy')
                         .addClass('bg-white border border-warning');
-                    break;
-                case 'unheavyAndUnurgent':
+                } else {
                     $('#' + this.modalId + ' ' + '.urgent')
                         .addClass('bg-white border border-danger text-dark');
                     $('#' + this.modalId + ' ' + '.heavy')
                         .addClass('bg-white border border-warning');
-                    break;
-                default:
-                    break;
+                }
             }
             $('#' + this.modalId + ' ' + '.form-control').val(this.text);
         } else {
@@ -11147,8 +11165,7 @@ class Task {
         $body.on('click', '#' + this.modalId + ' ' + '.btnClose', () => {
             if ($('#' + this.modalId + ' ' + '.form-control')
                 .val() != this.text) {
-                const $modalAlert = $('.modal-alert'),
-                    $modalAlertYesno = $('.modal-alert-yesno');
+                const $modalAlert = $('.modal-alert');
                 if ('content' in document.createElement('template')) {
                     const
                         // alertテンプレートの値を取得
@@ -11162,7 +11179,6 @@ class Task {
                         .removeClass('alert-hide')
                         .addClass('alert-show');
                     setTimeout(() => {
-                        console.log($modalAlertYesno);
                         $('.modal-alert-yesno').hide().fadeIn(300);
                     }, 1000);
                 } else {
@@ -11221,12 +11237,30 @@ class Task {
      */
     addTask() {
         // 新しいタグを作る
+        let cell, bg;
+        if (this.cellId.heavy) {
+            if (this.cellId.urgent) {
+                cell = '#heavyAndUrgent';
+                bg = 'bg-danger';
+            } else {
+                cell = '#heavyAndUnurgent';
+                bg = 'bg-warning';
+            }
+        } else {
+            if (this.cellId.urgent) {
+                cell = '#unheavyAndUrgent';
+                bg = 'bg-warning';
+            } else {
+                cell = '#unheavyAndUnurgent';
+                bg = 'bg-success';
+            }
+        }
         $('<div>', {
             id: this.cellItemId,
             text: this.text,
-            class: 'bg-warning rounded-lg p-2 m-1',
-            // モーダルダイアログを出すための属性
-        }).appendTo('#' + this.cellId);
+            class: bg + ' rounded-lg p-2 m-1',
+        }).appendTo(cell);
+
 
         this.addModal();
         this.addInput();
@@ -11234,7 +11268,7 @@ class Task {
         /**
          * modalを開くときの処理
          */
-        $('#' + this.cellId).on('click', '#' + this.cellItemId, () => {
+        $(cell).on('click', '#' + this.cellItemId, () => {
             // 背景の設定
             $('<div>', {
                 class: 'modal-backdrop show',
