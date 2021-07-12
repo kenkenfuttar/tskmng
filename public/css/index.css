@@ -15,26 +15,36 @@
   width: 45%;
 }
 
-.alert-dismissible .close {
-  position: relative;
-  padding: 0.25rem 0.5rem;
-  font-size: 0.875rem;
-  line-height: 1.5;
-}
-
 .modal-alert-success {
   display: none;
 }
 
 .alert-show {
-  height: 3.4375%;
-  -webkit-transition: height 2s 1s;
-  transition: height 2s 1s;
+  height: 3.4375rem;
+  -webkit-transition: height 1s 1s;
+  transition: height 1s 1s;
 }
 
 .alert-hide {
   height: 0;
-  -webkit-transition: height 2s 1s;
-  transition: height 2s 1s;
+  -webkit-transition: height 1s 1s;
+  transition: height 1s 1s;
+}
+
+.modal-alert-yesno {
+  position: relative;
+  display: none;
+}
+
+.modalClose {
+  position: absolute;
+  left: 300px;
+  color: inherit;
+}
+
+.alertClose {
+  position: absolute;
+  left: 400px;
+  color: inherit;
 }
 /*# sourceMappingURL=index.css.map */

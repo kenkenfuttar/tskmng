@@ -10,14 +10,6 @@
 .w-45 {
 	width: 45%;
 }
-.alert-dismissible {
-	.close {
-		position: relative;
-		padding: 0.25rem 0.5rem;
-		font-size: 0.875rem;
-		line-height: 1.5;
-	}
-}
 .modal-alert-success {
 	display: none;
 }
@@ -32,10 +24,24 @@ $alert-btn-padding-height: 0.25;
 // Alertsに付属のボタンの高さ倍率(fontSize倍率*高さ倍率)
 $alert-btn-height: 0.875 * 1.5;
 .alert-show {
-	height: ($alert-padding-height * 2 + ($alert-btn-padding-height * 2 + $alert-btn-height)+ 0.125) * 1%;
-	transition: height 2s 1s;
+	height: ($alert-padding-height * 2 + ($alert-btn-padding-height * 2 + $alert-btn-height)+ 0.125) * 1rem;
+	transition: height 1s 1s;
 }
 .alert-hide {
 	height: 0;
-	transition: height 2s 1s;
+	transition: height 1s 1s;
+}
+.modal-alert-yesno {
+	position: relative;
+	display: none;
+}
+.modalClose {
+	position: absolute;
+	left: 300px;
+	color: inherit;
+}
+.alertClose {
+	position: absolute;
+	left: 400px;
+	color: inherit;
 }
