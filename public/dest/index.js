@@ -11055,6 +11055,8 @@ class Task {
         this.text = text;
         this.id = id;
         this.cellId = cellId;
+        this.heavy = cellId.heavy;
+        this.urgent = cellId.urgent;
         this.task.text = this.text;
         this.task.id = this.id;
         this.task.cellId = this.cellId;
@@ -11062,6 +11064,19 @@ class Task {
         this.modalId = 'modal' + this.id;
     };
 
+
+    /**
+     * タスクを削除する
+     */
+    removeTask() {
+        const $removeObj = $(
+            // 一覧のタグ
+            '#' + this.cellItemId + ',' +
+            // inputのタグ
+            '#' + 'inputItem' + this.id,
+        );
+        $removeObj.remove();
+    }
     /**
      * modalを閉じる処理
      */
@@ -11105,7 +11120,46 @@ class Task {
         } else {
             $urgent.addClass(className);
         }
-        this.cellId.urgent = urgent;
+        this.urgent = urgent;
+    }
+
+    /**
+     * 重要バッチの変更
+     * @param {boolean} heavy 変更後の重要フラグ
+     */
+    changeHeavy(heavy) {
+        const $heavy = $('#' + this.modalId + ' ' + '.heavy'),
+            className = 'bg-white';
+        if (heavy) {
+            $heavy.removeClass(className);
+        } else {
+            $heavy.addClass(className);
+        }
+        this.heavy = heavy;
+    }
+
+    /**
+     * 変更チェック
+     * @return {boolean} 変更があった場合trueを返す
+     */
+    checkModify() {
+        // 重要バッヂ
+        if (this.cellId.heavy != this.heavy) {
+            return true;
+        }
+
+        // 緊急バッヂ
+        if (this.cellId.urgent != this.urgent) {
+            return true;
+        }
+
+        // テキストボックス
+        if ($('#' + this.modalId + ' ' + '.form-control').val() != this.text) {
+            return true;
+        }
+
+        // 何も変更がない
+        return false;
     }
 
     /**
@@ -11155,32 +11209,38 @@ class Task {
 
         // Deleteでデータを削除する
         $body.on('click', '#' + this.modalId + ' ' + '.btnDelete', () => {
-            const $removeObj = $(
-                // 一覧のタグ
-                '#' + this.cellItemId + ',' +
-                // modalのタグ
-                '#' + this.modalId + ',' +
-                // inputのタグ
-                '#' + 'inputItem' + this.id + ',' +
-                // 背景のタグ
-                '.modal-backdrop',
-            );
-            $removeObj.remove();
+            // const $removeObj = $(
+            //     // 一覧のタグ
+            //     '#' + this.cellItemId + ',' +
+            //     // modalのタグ
+            //     '#' + this.modalId + ',' +
+            //     // inputのタグ
+            //     '#' + 'inputItem' + this.id + ',' +
+            //     // 背景のタグ
+            //     '.modal-backdrop',
+            // );
+            this.removeTask();
+            $('#' + this.modalId + ',' + '.modal-backdrop').remove();
         });
 
         // SaveChangesタスクの内容を書き換える
         $body.on('click', '#' + this.modalId + ' ' + '.btnSave', () => {
             this.text = $('#' + this.modalId + ' ' + '.form-control').val();
+            this.cellId.heavy = this.heavy;
+            this.cellId.urgent = this.urgent;
             this.task.text = this.text;
-            $('#' + this.cellItemId).text(this.text);
-            $('#' + 'inputItem' + this.id).val(JSON.stringify(this.task));
+
+            // DOMの書き換え
+            // $('#' + this.cellItemId).text(this.text);
+            // $('#' + 'inputItem' + this.id).val(JSON.stringify(this.task));
+            this.removeTask();
+            this.addTask();
             $('.modal-alert-success').fadeIn(1000).delay(2000).fadeOut(2000);
         });
 
         // Close時未保存の内容があれば警告する
         $body.on('click', '#' + this.modalId + ' ' + '.btnClose', () => {
-            if ($('#' + this.modalId + ' ' + '.form-control')
-                .val() != this.text) {
+            if (this.checkModify()) {
                 const $modalAlert = $('.modal-alert');
                 if ('content' in document.createElement('template')) {
                     const
@@ -11231,8 +11291,12 @@ class Task {
             }
         });
 
-        $('.urgent').on('click', () => {
-            this.changeUrgent(!this.cellId.urgent);
+        $body.on('click', '#' + this.modalId + ' ' + '.urgent', () => {
+            this.changeUrgent(!this.urgent);
+        });
+
+        $body.on('click', '#' + this.modalId + ' ' + '.heavy', () => {
+            this.changeHeavy(!this.heavy);
         });
     };
 
