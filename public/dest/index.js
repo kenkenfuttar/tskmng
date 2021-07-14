@@ -10888,48 +10888,8 @@ return jQuery;
 'use strict';
 
 
-const $ = require('jquery');
-
-/**
- * radioボタンの選択を取得
- * @return {{heavy: boolean, urgent: boolean}} radioボタンの選択結果
- */
-const getCellId = () => {
-    // return $("input[name='heavyRadios']:checked").val();
-    const check = $("input[name='heavyRadios']:checked").val();
-    let heavy = true,
-        urgent = true;
-    switch (check) {
-        case 'heavyAndUrgent':
-            break;
-        case 'heavyAndUnurgent':
-            urgent = false;
-            break;
-        case 'unheavyAndUrgent':
-            heavy = false;
-            break;
-        case 'unheavyAndUnurgent':
-            heavy = false;
-            urgent = false;
-            break;
-        default:
-            break;
-    }
-    return { heavy: heavy, urgent: urgent };
-};
-getCellId;
-exports.getCellId = getCellId;
-
-},{"jquery":1}],3:[function(require,module,exports){
-/**
- * @file index.js
- */
-'use strict';
-
-
 const $ = require('jquery'),
     Clog = require('./log.js').Log,
-    index = require('./index.implement.js'),
     Task = require('./task.js');
 
 
@@ -10979,14 +10939,14 @@ $(() => {
      * タスク追加ボタンクリックイベント
      */
     $('#btnAddTask').on('click', () => {
-        // radioボタン値の取得
-        const cellId = index.getCellId(),
+        const cellId = { heavy: true, urgent: true },
             // 追加タスクのjsonオブジェクトを作る
             task = new Task($('#addText').val(), idNumber++, cellId);
         log.log(cellId);
         task.addTask();
         // submitのPOST内容に含めるために#formIndex内にinputのタグを作る
         tasks.push(task);
+        task.openModal();
     });
 
     /**
@@ -10997,7 +10957,7 @@ $(() => {
     });
 });
 
-},{"./index.implement.js":2,"./log.js":4,"./task.js":5,"jquery":1}],4:[function(require,module,exports){
+},{"./log.js":3,"./task.js":5,"jquery":1}],3:[function(require,module,exports){
 /**
  * @file log.js
  */
@@ -11028,12 +10988,123 @@ class Log {
 }
 module.exports.Log = Log;
 
-},{"jquery":1}],5:[function(require,module,exports){
+},{"jquery":1}],4:[function(require,module,exports){
+/**
+ * @file modal.js
+ */
+'use strict';
+
+/**
+ * @class Modal
+ */
+class Modal {
+    /**
+     * Modalコンストラクタ
+     * @param {string} modalId
+     */
+    constructor(modalId) {
+        this.id = modalId;
+    }
+    /**
+     * modalを閉じる処理
+     */
+    closeModal() {
+        $('.modal-alert').removeClass('alert-show').addClass('alert-hide');
+        $('#' + this.id + ',' + '.alert').hide();
+        // 背景削除
+        $('.modal-backdrop').remove();
+    }
+    /**
+     * Deleteボタンを無効・有効化する
+     */
+    disabledDelete() {
+        const $btnDelete = $('#' + this.id + ' ' + '.btnDelete');
+        if ($('#' + this.id + ' ' + '.form-check-input').prop('checked')) {
+            $btnDelete.removeAttr('disabled');
+        } else {
+            $btnDelete.attr('disabled', 'disabled');
+        };
+    }
+
+    /**
+     * ボタン群を有効化する
+     * @param {string} $attrObj 有効化するオブジェクト
+     */
+    disabledBtnArea($attrObj) {
+        $attrObj.removeAttr('disabled');
+        this.disabledDelete();
+    }
+
+    /**
+     * modalを開くときの処理
+     * @param {string} text タスクの文面
+     */
+    /**
+     * modalを開くときの処理
+     * @param {string} text タスクの文面
+     * @param {{heavy: boolean, urgent: boolean}} cellId 表示場所のID
+     */
+    openModal(text, cellId) {
+        // 背景の設定
+        $('<div>', {
+            class: 'modal-backdrop show',
+        }).appendTo('body');
+        // 保存成功アラートは消しておく
+        $('.modal-alert-success').hide();
+        // modal画面の表示
+        $('#' + this.id).show();
+        // modalを開いたときは必ず非チェック状態とする
+        $('#' + this.id + ' ' + '.form-check-input').prop('checked', false);
+        // modalを開いたときはボタンは有効化する
+        const $attrObj = $(
+            '#' + this.id + ' .modal-footer .btn' + ',' +
+            '#' + this.id + ' ' + '.form-check-input',
+        );
+        this.disabledBtnArea($attrObj);
+        // タスクの読み直し
+        $('#' + this.id + ' ' + '.form-control').val(text);
+        this.changeUrgent(cellId.urgent);
+        this.changeHeavy(cellId.heavy);
+    }
+
+    /**
+     * 緊急バッチの変更
+     * @param {boolean} urgent 変更後の緊急フラグ
+     */
+    changeUrgent(urgent) {
+        const $urgent = $('#' + this.id + ' ' + '.urgent'),
+            className = 'bg-white text-dark';
+        if (urgent) {
+            $urgent.removeClass(className);
+        } else {
+            $urgent.addClass(className);
+        }
+    }
+
+    /**
+     * 重要バッチの変更
+     * @param {boolean} heavy 変更後の重要フラグ
+     */
+    changeHeavy(heavy) {
+        const $heavy = $('#' + this.id + ' ' + '.heavy'),
+            className = 'bg-white';
+        if (heavy) {
+            $heavy.removeClass(className);
+        } else {
+            $heavy.addClass(className);
+        }
+    }
+}
+module.exports = Modal;
+
+
+},{}],5:[function(require,module,exports){
 /**
  * @file task.js
  */
 'use strict';
-const $ = require('jquery');
+const $ = require('jquery'),
+    Modal = require('./modal.js');
 
 const deleteCheck = 'deleteCheck',
     $body = $('body');
@@ -11064,7 +11135,6 @@ class Task {
         this.modalId = 'modal' + this.id;
     };
 
-
     /**
      * タスクを削除する
      */
@@ -11076,66 +11146,6 @@ class Task {
             '#' + 'inputItem' + this.id,
         );
         $removeObj.remove();
-    }
-    /**
-     * modalを閉じる処理
-     */
-    closeModal() {
-        $('.modal-alert').removeClass('alert-show').addClass('alert-hide');
-        $('#' + this.modalId + ',' + '.alert').hide();
-        // 背景削除
-        $('.modal-backdrop').remove();
-    }
-
-    /**
-     * Deleteボタンを無効・有効化する
-     */
-    disabledDelete() {
-        const $btnDelete = $('#' + this.modalId + ' ' + '.btnDelete');
-        if ($('#' + deleteCheck + this.id).prop('checked')) {
-            $btnDelete.removeAttr('disabled');
-        } else {
-            $btnDelete.attr('disabled', 'disabled');
-        };
-    }
-
-    /**
-     * ボタン群を有効化する
-     * @param {string} $attrObj 有効化するオブジェクト
-     */
-    disabledBtnArea($attrObj) {
-        $attrObj.removeAttr('disabled');
-        this.disabledDelete();
-    }
-
-    /**
-     * 緊急バッチの変更
-     * @param {boolean} urgent 変更後の緊急フラグ
-     */
-    changeUrgent(urgent) {
-        const $urgent = $('#' + this.modalId + ' ' + '.urgent'),
-            className = 'bg-white text-dark';
-        if (urgent) {
-            $urgent.removeClass(className);
-        } else {
-            $urgent.addClass(className);
-        }
-        this.urgent = urgent;
-    }
-
-    /**
-     * 重要バッチの変更
-     * @param {boolean} heavy 変更後の重要フラグ
-     */
-    changeHeavy(heavy) {
-        const $heavy = $('#' + this.modalId + ' ' + '.heavy'),
-            className = 'bg-white';
-        if (heavy) {
-            $heavy.removeClass(className);
-        } else {
-            $heavy.addClass(className);
-        }
-        this.heavy = heavy;
     }
 
     /**
@@ -11166,6 +11176,7 @@ class Task {
      * addModal
      */
     addModal() {
+        const modal = new Modal(this.modalId);
         // bodyの直下にモーダル用のtemplateタグを作成する
         // $('#' + 'templateTarget').load('.\\dest\\modalTemplate.html');
         if ('content' in document.createElement('template')) {
@@ -11204,21 +11215,11 @@ class Task {
 
         // check時にDeleteボタンが使えるようにする（checkしてないときは使えないようにする）
         $body.on('change', '#' + deleteCheck + this.id, () => {
-            this.disabledDelete();
+            modal.disabledDelete();
         });
 
         // Deleteでデータを削除する
         $body.on('click', '#' + this.modalId + ' ' + '.btnDelete', () => {
-            // const $removeObj = $(
-            //     // 一覧のタグ
-            //     '#' + this.cellItemId + ',' +
-            //     // modalのタグ
-            //     '#' + this.modalId + ',' +
-            //     // inputのタグ
-            //     '#' + 'inputItem' + this.id + ',' +
-            //     // 背景のタグ
-            //     '.modal-backdrop',
-            // );
             this.removeTask();
             $('#' + this.modalId + ',' + '.modal-backdrop').remove();
         });
@@ -11231,8 +11232,6 @@ class Task {
             this.task.text = this.text;
 
             // DOMの書き換え
-            // $('#' + this.cellItemId).text(this.text);
-            // $('#' + 'inputItem' + this.id).val(JSON.stringify(this.task));
             this.removeTask();
             this.addTask();
             $('.modal-alert-success').fadeIn(1000).delay(2000).fadeOut(2000);
@@ -11275,7 +11274,7 @@ class Task {
                             .removeClass('alert-show')
                             .addClass('alert-hide');
                         // ボタンの有効化
-                        this.disabledBtnArea($attrObj);
+                        modal.disabledBtnArea($attrObj);
                         $('.modal-alert-yesno').remove();
                     });
                 /**
@@ -11284,19 +11283,21 @@ class Task {
                 $body.on('click', '#' + this.modalId + ' ' + '.modalClose',
                     () => {
                         $('.modal-alert-yesno').remove();
-                        this.closeModal();
+                        modal.closeModal();
                     });
             } else {
-                this.closeModal();
+                modal.closeModal();
             }
         });
 
         $body.on('click', '#' + this.modalId + ' ' + '.urgent', () => {
-            this.changeUrgent(!this.urgent);
+            modal.changeUrgent(!this.urgent);
+            this.urgent = !this.urgent;
         });
 
         $body.on('click', '#' + this.modalId + ' ' + '.heavy', () => {
-            this.changeHeavy(!this.heavy);
+            modal.changeHeavy(!this.heavy);
+            this.heavy = !this.heavy;
         });
     };
 
@@ -11350,30 +11351,15 @@ class Task {
         this.addInput();
 
         /**
-         * modalを開くときの処理
+         * タスククリックイベント
          */
         $(cell).on('click', '#' + this.cellItemId, () => {
-            // 背景の設定
-            $('<div>', {
-                class: 'modal-backdrop show',
-            }).appendTo('body');
-            // 保存成功アラートは消しておく
-            $('.modal-alert-success').hide();
-            // modal画面の表示
-            $('#' + this.modalId).show();
-            // modalを開いたときは必ず非チェック状態とする
-            $('#' + deleteCheck + this.id).prop('checked', false);
-            // modalを開いたときはボタンは有効化する
-            const $attrObj = $(
-                '#' + this.modalId + ' .modal-footer .btn' + ',' +
-                '#' + this.modalId + ' ' + '.form-check-input',
-            );
-            this.disabledBtnArea($attrObj);
-            $('#' + this.modalId + ' ' + '.form-control').val(this.text);
+            const modal = new Modal(this.modalId);
+            modal.openModal(this.text, this.cellId);
         });
     }
 }
 module.exports = Task;
 
-},{"jquery":1}]},{},[3])
+},{"./modal.js":4,"jquery":1}]},{},[2])
 //# sourceMappingURL=index.js.map

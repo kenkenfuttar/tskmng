@@ -2,7 +2,8 @@
  * @file task.js
  */
 'use strict';
-const $ = require('jquery');
+const $ = require('jquery'),
+    Modal = require('./modal.js');
 
 const deleteCheck = 'deleteCheck',
     $body = $('body');
@@ -33,7 +34,6 @@ class Task {
         this.modalId = 'modal' + this.id;
     };
 
-
     /**
      * タスクを削除する
      */
@@ -45,66 +45,6 @@ class Task {
             '#' + 'inputItem' + this.id,
         );
         $removeObj.remove();
-    }
-    /**
-     * modalを閉じる処理
-     */
-    closeModal() {
-        $('.modal-alert').removeClass('alert-show').addClass('alert-hide');
-        $('#' + this.modalId + ',' + '.alert').hide();
-        // 背景削除
-        $('.modal-backdrop').remove();
-    }
-
-    /**
-     * Deleteボタンを無効・有効化する
-     */
-    disabledDelete() {
-        const $btnDelete = $('#' + this.modalId + ' ' + '.btnDelete');
-        if ($('#' + deleteCheck + this.id).prop('checked')) {
-            $btnDelete.removeAttr('disabled');
-        } else {
-            $btnDelete.attr('disabled', 'disabled');
-        };
-    }
-
-    /**
-     * ボタン群を有効化する
-     * @param {string} $attrObj 有効化するオブジェクト
-     */
-    disabledBtnArea($attrObj) {
-        $attrObj.removeAttr('disabled');
-        this.disabledDelete();
-    }
-
-    /**
-     * 緊急バッチの変更
-     * @param {boolean} urgent 変更後の緊急フラグ
-     */
-    changeUrgent(urgent) {
-        const $urgent = $('#' + this.modalId + ' ' + '.urgent'),
-            className = 'bg-white text-dark';
-        if (urgent) {
-            $urgent.removeClass(className);
-        } else {
-            $urgent.addClass(className);
-        }
-        this.urgent = urgent;
-    }
-
-    /**
-     * 重要バッチの変更
-     * @param {boolean} heavy 変更後の重要フラグ
-     */
-    changeHeavy(heavy) {
-        const $heavy = $('#' + this.modalId + ' ' + '.heavy'),
-            className = 'bg-white';
-        if (heavy) {
-            $heavy.removeClass(className);
-        } else {
-            $heavy.addClass(className);
-        }
-        this.heavy = heavy;
     }
 
     /**
@@ -135,6 +75,7 @@ class Task {
      * addModal
      */
     addModal() {
+        const modal = new Modal(this.modalId);
         // bodyの直下にモーダル用のtemplateタグを作成する
         // $('#' + 'templateTarget').load('.\\dest\\modalTemplate.html');
         if ('content' in document.createElement('template')) {
@@ -173,7 +114,7 @@ class Task {
 
         // check時にDeleteボタンが使えるようにする（checkしてないときは使えないようにする）
         $body.on('change', '#' + deleteCheck + this.id, () => {
-            this.disabledDelete();
+            modal.disabledDelete();
         });
 
         // Deleteでデータを削除する
@@ -232,7 +173,7 @@ class Task {
                             .removeClass('alert-show')
                             .addClass('alert-hide');
                         // ボタンの有効化
-                        this.disabledBtnArea($attrObj);
+                        modal.disabledBtnArea($attrObj);
                         $('.modal-alert-yesno').remove();
                     });
                 /**
@@ -241,19 +182,21 @@ class Task {
                 $body.on('click', '#' + this.modalId + ' ' + '.modalClose',
                     () => {
                         $('.modal-alert-yesno').remove();
-                        this.closeModal();
+                        modal.closeModal();
                     });
             } else {
-                this.closeModal();
+                modal.closeModal();
             }
         });
 
         $body.on('click', '#' + this.modalId + ' ' + '.urgent', () => {
-            this.changeUrgent(!this.urgent);
+            modal.changeUrgent(!this.urgent);
+            this.urgent = !this.urgent;
         });
 
         $body.on('click', '#' + this.modalId + ' ' + '.heavy', () => {
-            this.changeHeavy(!this.heavy);
+            modal.changeHeavy(!this.heavy);
+            this.heavy = !this.heavy;
         });
     };
 
@@ -307,26 +250,11 @@ class Task {
         this.addInput();
 
         /**
-         * modalを開くときの処理
+         * タスククリックイベント
          */
         $(cell).on('click', '#' + this.cellItemId, () => {
-            // 背景の設定
-            $('<div>', {
-                class: 'modal-backdrop show',
-            }).appendTo('body');
-            // 保存成功アラートは消しておく
-            $('.modal-alert-success').hide();
-            // modal画面の表示
-            $('#' + this.modalId).show();
-            // modalを開いたときは必ず非チェック状態とする
-            $('#' + deleteCheck + this.id).prop('checked', false);
-            // modalを開いたときはボタンは有効化する
-            const $attrObj = $(
-                '#' + this.modalId + ' .modal-footer .btn' + ',' +
-                '#' + this.modalId + ' ' + '.form-check-input',
-            );
-            this.disabledBtnArea($attrObj);
-            $('#' + this.modalId + ' ' + '.form-control').val(this.text);
+            const modal = new Modal(this.modalId);
+            modal.openModal(this.text, this.cellId);
         });
     }
 }

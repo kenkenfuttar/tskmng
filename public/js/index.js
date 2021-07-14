@@ -6,7 +6,6 @@
 
 const $ = require('jquery'),
     Clog = require('./log.js').Log,
-    index = require('./index.implement.js'),
     Task = require('./task.js');
 
 
@@ -56,14 +55,14 @@ $(() => {
      * タスク追加ボタンクリックイベント
      */
     $('#btnAddTask').on('click', () => {
-        // radioボタン値の取得
-        const cellId = index.getCellId(),
+        const cellId = { heavy: true, urgent: true },
             // 追加タスクのjsonオブジェクトを作る
             task = new Task($('#addText').val(), idNumber++, cellId);
         log.log(cellId);
         task.addTask();
         // submitのPOST内容に含めるために#formIndex内にinputのタグを作る
         tasks.push(task);
+        task.openModal();
     });
 
     /**
