@@ -10998,19 +10998,23 @@ module.exports.Log = Log;
  * @class Modal
  */
 class Modal {
+    mId = 'modal';
+    dId = 'deleteCheck';
     /**
      * Modalコンストラクタ
-     * @param {string} modalId
+     * @param {number} id
      */
-    constructor(modalId) {
-        this.id = modalId;
+    constructor(id) {
+        this.id = id;
+        this.mId += id;
+        this.dId += id;
     }
     /**
      * modalを閉じる処理
      */
     closeModal() {
         $('.modal-alert').removeClass('alert-show').addClass('alert-hide');
-        $('#' + this.id + ',' + '.alert').hide();
+        $('#' + this.mId + ',' + '.alert').hide();
         // 背景削除
         $('.modal-backdrop').remove();
     }
@@ -11018,8 +11022,8 @@ class Modal {
      * Deleteボタンを無効・有効化する
      */
     disabledDelete() {
-        const $btnDelete = $('#' + this.id + ' ' + '.btnDelete');
-        if ($('#' + this.id + ' ' + '.form-check-input').prop('checked')) {
+        const $btnDelete = $('#' + this.mId + ' ' + '.btnDelete');
+        if ($('#' + this.dId).prop('checked')) {
             $btnDelete.removeAttr('disabled');
         } else {
             $btnDelete.attr('disabled', 'disabled');
@@ -11052,17 +11056,17 @@ class Modal {
         // 保存成功アラートは消しておく
         $('.modal-alert-success').hide();
         // modal画面の表示
-        $('#' + this.id).show();
+        $('#' + this.mId).show();
         // modalを開いたときは必ず非チェック状態とする
-        $('#' + this.id + ' ' + '.form-check-input').prop('checked', false);
+        $('#' + this.dId).prop('checked', false);
         // modalを開いたときはボタンは有効化する
         const $attrObj = $(
-            '#' + this.id + ' .modal-footer .btn' + ',' +
-            '#' + this.id + ' ' + '.form-check-input',
+            '#' + this.mId + ' .modal-footer .btn' + ',' +
+            '#' + this.mId + ' ' + '.form-check-input',
         );
         this.disabledBtnArea($attrObj);
         // タスクの読み直し
-        $('#' + this.id + ' ' + '.form-control').val(text);
+        $('#' + this.mId + ' ' + '.form-control').val(text);
         this.changeUrgent(cellId.urgent);
         this.changeHeavy(cellId.heavy);
     }
@@ -11072,7 +11076,7 @@ class Modal {
      * @param {boolean} urgent 変更後の緊急フラグ
      */
     changeUrgent(urgent) {
-        const $urgent = $('#' + this.id + ' ' + '.urgent'),
+        const $urgent = $('#' + this.mId + ' ' + '.urgent'),
             className = 'bg-white text-dark';
         if (urgent) {
             $urgent.removeClass(className);
@@ -11086,12 +11090,80 @@ class Modal {
      * @param {boolean} heavy 変更後の重要フラグ
      */
     changeHeavy(heavy) {
-        const $heavy = $('#' + this.id + ' ' + '.heavy'),
+        const $heavy = $('#' + this.mId + ' ' + '.heavy'),
             className = 'bg-white';
         if (heavy) {
             $heavy.removeClass(className);
         } else {
             $heavy.addClass(className);
+        }
+    }
+
+    /**
+     * @desc バッヂの表示設定
+     * @param {{heavy: boolean, urgent: boolean}} cellId 表示場所のID
+     */
+    setBadge(cellId) {
+        // TODO: もう少し効率よく書けそう
+        if (cellId.heavy) {
+            if (!cellId.urgent) {
+                $('#' + this.mId + ' ' + '.urgent')
+                    .addClass('bg-white border border-danger text-dark');
+            }
+        } else {
+            if (cellId.urgent) {
+                $('#' + this.mId + ' ' + '.heavy')
+                    .addClass('bg-white border border-warning');
+            } else {
+                $('#' + this.mId + ' ' + '.urgent')
+                    .addClass('bg-white border border-danger text-dark');
+                $('#' + this.mId + ' ' + '.heavy')
+                    .addClass('bg-white border border-warning');
+            }
+        }
+    }
+
+    /**
+     * @desc bodyの直下にモーダル用のtemplateタグの中身を複製する
+     * @param {{heavy: boolean, urgent: boolean}} cellId 表示場所のID
+     * @param {string} text タスクの表示内容
+     */
+    copyTemplate(cellId, text) {
+        // $('#' + 'templateTarget').load('.\\dest\\modalTemplate.html');
+        /**
+         * {@link https://developer.mozilla.org/ja/docs/Web/HTML/Element/template}
+         * @desc id==modalTemplateの中身をbody直下に複製する
+         */
+        if ('content' in document.createElement('template')) {
+            console.log('対応しているよ');
+            const
+                /**
+                 * @type {HTMLBodyElement}
+                 * @desc コピー先の親要素
+                 */
+                body = document.querySelector('body'),
+                /**
+                 * @type {Element}
+                 * @desc コピー元の要素
+                 */
+                template = document.querySelector('#modalTemplate'),
+                /**
+                 * @type {HTMLTemplateElement}
+                 * @readonly
+                 * @desc コピー元から複製した内容. DOMには未反映.
+                 */
+                clone = template.content.cloneNode(true);
+
+            body.prepend(clone);
+            // 複製した内容の書き換え
+            $('#modaln').attr('id', this.mId);
+            $('#deleteCheck').attr('id', this.dId);
+            $('label .form-check-label').attr('for', this.dId);
+            // バッヂの設定
+            this.setBadge(cellId);
+            $('#' + this.mId + ' ' + '.form-control').val(text);
+        } else {
+            console.log('対応してないよ');
         }
     }
 }
@@ -11115,7 +11187,7 @@ const
      */
     deleteCheck = 'deleteCheck',
     /**
-     * @type {JQuery}
+     * @type {JQuery<HTMLElement>}
      * @desc bodyのjQueryオブジェクト、追加要素操作用
      */
     $body = $('body');
@@ -11146,6 +11218,7 @@ class Task {
      */
     modalId;
     /**
+     * @property @private
      * @type {boolean}
      * @desc 緊急度. true: 緊急, false:緊急ではない
      */
@@ -11223,59 +11296,14 @@ class Task {
      * addModal
      */
     addModal() {
-        const modal = new Modal(this.modalId);
+        const modal = new Modal(this.id);
         // bodyの直下にモーダル用のtemplateタグの中身を複製する
-        // $('#' + 'templateTarget').load('.\\dest\\modalTemplate.html');
-        /**
-         * @todo TODO: modal.jsにif文内を移管する
-         */
-        if ('content' in document.createElement('template')) {
-            console.log('対応しているよ');
-            const
-                /**
-                 * @type {HTMLBodyElement}
-                 * @desc コピー先の親要素
-                 */
-                body = document.querySelector('body'),
-                /**
-                 * @type {Element}
-                 * @desc コピー元の要素
-                 */
-                template = document.querySelector('#modalTemplate'),
-                /**
-                 * 
-                 */
-                clone = template.content.cloneNode(true);
-
-            body.prepend(clone);
-            // 複製した内容の書き換え
-            $('#' + 'modal' + 'n').attr('id', this.modalId);
-            $('#' + deleteCheck).attr('id', deleteCheck + this.id);
-            $('label .form-check-label').attr('for', deleteCheck + this.id);
-            // TODO: もう少し効率よく書けそう
-            // バッヂの設定
-            if (this.cellId.heavy) {
-                if (!this.cellId.urgent) {
-                    $('#' + this.modalId + ' ' + '.urgent')
-                        .addClass('bg-white border border-danger text-dark');
-                }
-            } else {
-                if (this.cellId.urgent) {
-                    $('#' + this.modalId + ' ' + '.heavy')
-                        .addClass('bg-white border border-warning');
-                } else {
-                    $('#' + this.modalId + ' ' + '.urgent')
-                        .addClass('bg-white border border-danger text-dark');
-                    $('#' + this.modalId + ' ' + '.heavy')
-                        .addClass('bg-white border border-warning');
-                }
-            }
-            $('#' + this.modalId + ' ' + '.form-control').val(this.text);
-        } else {
-            console.log('対応してないよ');
-        }
+        modal.copyTemplate(this.cellId, this.text);
 
         // check時にDeleteボタンが使えるようにする（checkしてないときは使えないようにする）
+        /**
+         * @event checkbox変更時
+         */
         $body.on('change', '#' + deleteCheck + this.id, () => {
             modal.disabledDelete();
         });
@@ -11381,28 +11409,55 @@ class Task {
     };
 
     /**
-     * @this Tasks
+     * @this Task
      */
     addTask() {
-        // 新しいタグを作る
-        let cell, bg;
+        let
+            /**
+             * @type {string}
+             * @desc タスクの表示位置
+             */
+            cell,
+            /**
+             * @type {number|string}
+             * @desc タスクの表示色
+             * {@link https://getbootstrap.com/docs/4.6/utilities/colors/#background-color}
+             */
+            bgNumber = 0,
+            bg;
+
         if (this.cellId.heavy) {
-            if (this.cellId.urgent) {
-                cell = '#heavyAndUrgent';
-                bg = 'bg-danger';
-            } else {
-                cell = '#heavyAndUnurgent';
-                bg = 'bg-warning';
-            }
+            cell = '#heavyAnd';
+            bgNumber++;
         } else {
-            if (this.cellId.urgent) {
-                cell = '#unheavyAndUrgent';
-                bg = 'bg-warning';
-            } else {
-                cell = '#unheavyAndUnurgent';
-                bg = 'bg-success';
-            }
+            cell = '#unheavyAnd';
+            bgNumber = 0;
         }
+
+        if (this.cellId.urgent) {
+            cell += 'Urgent';
+            bgNumber++;
+        } else {
+            cell += 'Unurgent';
+            bgNumber += 0;
+        }
+
+        switch (bgNumber) {
+            case 0:
+                bg = 'bg-success';
+                break;
+            case 1:
+                bg = 'bg-warning';
+                break;
+            case 2:
+                bg = 'bg-danger';
+                break;
+            default:
+                bg = 'bg-warning';
+                break;
+        }
+
+        // 新しいタグを作る
         $('<div>', {
             id: this.cellItemId,
             text: this.text,
@@ -11417,7 +11472,7 @@ class Task {
          * タスククリックイベント
          */
         $(cell).on('click', '#' + this.cellItemId, () => {
-            const modal = new Modal(this.modalId);
+            const modal = new Modal(this.id);
             modal.openModal(this.text, this.cellId);
         });
     }

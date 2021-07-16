@@ -123,61 +123,9 @@ class Task {
      * addModal
      */
     addModal() {
-        const modal = new Modal(this.modalId);
+        const modal = new Modal(this.id);
         // bodyの直下にモーダル用のtemplateタグの中身を複製する
-        // $('#' + 'templateTarget').load('.\\dest\\modalTemplate.html');
-        /**
-         * @todo TODO: modal.jsにif文内を移管する
-         * {@link https://developer.mozilla.org/ja/docs/Web/HTML/Element/template}
-         * @desc id==modalTemplateの中身をbody直下に複製する
-         */
-        if ('content' in document.createElement('template')) {
-            console.log('対応しているよ');
-            const
-                /**
-                 * @type {HTMLBodyElement}
-                 * @desc コピー先の親要素
-                 */
-                body = document.querySelector('body'),
-                /**
-                 * @type {Element}
-                 * @desc コピー元の要素
-                 */
-                template = document.querySelector('#modalTemplate'),
-                /**
-                 * @type {HTMLTemplateElement}
-                 * @readonly
-                 * @desc コピー元から複製した内容. DOMには未反映.
-                 */
-                clone = template.content.cloneNode(true);
-
-            body.prepend(clone);
-            // 複製した内容の書き換え
-            $('#' + 'modal' + 'n').attr('id', this.modalId);
-            $('#' + deleteCheck).attr('id', deleteCheck + this.id);
-            $('label .form-check-label').attr('for', deleteCheck + this.id);
-            // TODO: もう少し効率よく書けそう
-            // バッヂの設定
-            if (this.cellId.heavy) {
-                if (!this.cellId.urgent) {
-                    $('#' + this.modalId + ' ' + '.urgent')
-                        .addClass('bg-white border border-danger text-dark');
-                }
-            } else {
-                if (this.cellId.urgent) {
-                    $('#' + this.modalId + ' ' + '.heavy')
-                        .addClass('bg-white border border-warning');
-                } else {
-                    $('#' + this.modalId + ' ' + '.urgent')
-                        .addClass('bg-white border border-danger text-dark');
-                    $('#' + this.modalId + ' ' + '.heavy')
-                        .addClass('bg-white border border-warning');
-                }
-            }
-            $('#' + this.modalId + ' ' + '.form-control').val(this.text);
-        } else {
-            console.log('対応してないよ');
-        }
+        modal.copyTemplate(this.cellId, this.text);
 
         // check時にDeleteボタンが使えるようにする（checkしてないときは使えないようにする）
         /**
@@ -302,25 +250,26 @@ class Task {
              * @desc タスクの表示色
              * {@link https://getbootstrap.com/docs/4.6/utilities/colors/#background-color}
              */
+            bgNumber = 0,
             bg;
 
         if (this.cellId.heavy) {
             cell = '#heavyAnd';
-            bg++;
+            bgNumber++;
         } else {
-            cell = '#unHeavyAnd';
-            bg = 0;
+            cell = '#unheavyAnd';
+            bgNumber = 0;
         }
 
         if (this.cellId.urgent) {
             cell += 'Urgent';
-            bg++;
+            bgNumber++;
         } else {
             cell += 'Unurgent';
-            bg += 0;
+            bgNumber += 0;
         }
 
-        switch (bg) {
+        switch (bgNumber) {
             case 0:
                 bg = 'bg-success';
                 break;
@@ -331,6 +280,7 @@ class Task {
                 bg = 'bg-danger';
                 break;
             default:
+                bg = 'bg-warning';
                 break;
         }
 
@@ -349,7 +299,7 @@ class Task {
          * タスククリックイベント
          */
         $(cell).on('click', '#' + this.cellItemId, () => {
-            const modal = new Modal(this.modalId);
+            const modal = new Modal(this.id);
             modal.openModal(this.text, this.cellId);
         });
     }
