@@ -12,9 +12,9 @@ const $ = require('jquery'),
 let
     /**
      * @type {{text: string,
-           id: number,
-           cellId: { heavy: boolean, urgent: boolean }}}
-     * @description タスク1つの内容
+        id: number,
+        cellId: { heavy: boolean, urgent: boolean }}}
+     * @desc タスク1つの内容
      */
     objTask = { text: '', id: '', cellId: { heavy: '', urgent: '' } },
     /**
@@ -62,7 +62,7 @@ $(() => {
         task.addTask();
         // submitのPOST内容に含めるために#formIndex内にinputのタグを作る
         tasks.push(task);
-        task.openModal();
+        task.openTask();
     });
 
     /**

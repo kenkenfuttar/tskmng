@@ -10946,7 +10946,7 @@ $(() => {
         task.addTask();
         // submitのPOST内容に含めるために#formIndex内にinputのタグを作る
         tasks.push(task);
-        task.openModal();
+        task.openTask();
     });
 
     /**
@@ -11409,7 +11409,16 @@ class Task {
     };
 
     /**
-     * @this Task
+     * @method
+     */
+    openTask() {
+        const modal = new Modal(this.id);
+        modal.openModal(this.text, this.cellId);
+    }
+
+    /**
+     * @method
+     * @return {void}
      */
     addTask() {
         let
@@ -11471,10 +11480,7 @@ class Task {
         /**
          * タスククリックイベント
          */
-        $(cell).on('click', '#' + this.cellItemId, () => {
-            const modal = new Modal(this.id);
-            modal.openModal(this.text, this.cellId);
-        });
+        $(cell).on('click', '#' + this.cellItemId, () => this.openTask());
     }
 }
 module.exports = Task;
