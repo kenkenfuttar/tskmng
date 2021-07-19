@@ -36,14 +36,14 @@ class Task {
      * @desc タスク一覧上でのidに相当する値
      * @example <caption>cellItem + 1 = 'cellItem1'</caption>
      */
-    cellItemId;
+    cellItemId = 'cellItem';
     /**
      * @type {string}
      * @desc タスクに対して紐づけられるmodal画面のidに相当する値
         taskオブジェクト作成時にmodal画面も作成され、idが採番される
      * @example <caption>modal + 1 = 'modal1'</caption>
      */
-    modalId;
+    modalId = 'modal';
     /**
      * @property @private
      * @type {boolean}
@@ -55,6 +55,7 @@ class Task {
      * @desc 重要度. true: 重要, false:重要ではない
      */
     heavy;
+    inputItemId = 'inputItem';
 
     /**
      * @since 0.0.1α
@@ -72,8 +73,9 @@ class Task {
         this.task.text = this.text;
         this.task.id = this.id;
         this.task.cellId = this.cellId;
-        this.cellItemId = 'cellItem' + this.id;
-        this.modalId = 'modal' + this.id;
+        this.cellItemId += this.id;
+        this.modalId += this.id;
+        this.inputItemId += this.id;
     };
 
     /**
@@ -87,10 +89,7 @@ class Task {
             // 一覧のタグ
             '#' + this.cellItemId + ',' +
             // inputのタグ
-            /**
-             * @todo TODO: 定数化
-             */
-            '#' + 'inputItem' + this.id,
+            '#' + this.inputItemId,
         );
         $removeObj.remove();
     }
@@ -109,10 +108,7 @@ class Task {
         if (this.cellId.urgent != this.urgent) return true;
 
         // テキストボックス
-        /**
-         * @todo TODO: class,idの設定
-         */
-        const textVal = $('#' + this.modalId + ' ' + '.form-control').val();
+        const textVal = $('#' + this.modalId + ' ' + '.txtTask').val();
         if (textVal != this.text) return true;
 
         // 何も変更がない場合falseを返す
@@ -120,12 +116,58 @@ class Task {
     }
 
     /**
-     * addModal
+     * @method showAlert
+     * @param {Modal} modal modal画面
+     */
+    showAlert(modal) {
+        const $modalAlert = $('.modal-alert');
+        if ('content' in document.createElement('template')) {
+            const
+                // alertテンプレートの値を取得
+                modalAlert = document.querySelector(
+                    '#' + this.modalId + ' .modal-alert'),
+                template = document.querySelector('#alertTemplate'),
+                clone = template.content.cloneNode(true);
+            modalAlert.append(clone);
+            $modalAlert.removeClass('alert-hide').addClass('alert-show');
+            setTimeout(() => {
+                $('.modal-alert-yesno').hide().fadeIn(300);
+            }, 1000);
+        } else {
+            console.log('対応してないよ');
+        }
+        const btns = '#' + this.modalId + ' .modal-footer .btn',
+            chkDelete = '#' + this.modalId + ' ' + '.form-check-input',
+            $attrObj = $(btns + ',' + chkDelete);
+        $attrObj.attr('disabled', 'disabled');
+
+        /**
+         * Alertsを解除時にボタンの有効無効を再設定
+         */
+        $body.on('click', '#' + this.modalId + ' ' + '.alertClose', () => {
+            // modalのサイズを元に戻す。
+            $modalAlert.removeClass('alert-show').addClass('alert-hide');
+            // ボタンの有効化
+            modal.disabledBtnArea($attrObj);
+            $('.modal-alert-yesno').remove();
+        });
+        /**
+         * そのまま閉じる
+         */
+        $body.on('click', '#' + this.modalId + ' ' + '.modalClose', () => {
+            $('.modal-alert-yesno').remove();
+            modal.closeModal();
+        });
+    }
+    /**
+     * @method addModal
      */
     addModal() {
         const modal = new Modal(this.id);
-        // bodyの直下にモーダル用のtemplateタグの中身を複製する
-        modal.copyTemplate(this.cellId, this.text);
+        if ($('#' + this.modalId).length == 0) {
+            // bodyの直下にモーダル用のtemplateタグの中身を複製する
+            modal.copyTemplate(this.cellId, this.text);
+        }
 
         // check時にDeleteボタンが使えるようにする（checkしてないときは使えないようにする）
         /**
@@ -144,7 +186,7 @@ class Task {
 
         // SaveChangesタスクの内容を書き換える
         $body.on('click', '#' + this.modalId + ' ' + '.btnSave', () => {
-            this.text = $('#' + this.modalId + ' ' + '.form-control').val();
+            this.text = $('#' + this.modalId + ' ' + '.txtTask').val();
             this.cellId.heavy = this.heavy;
             this.cellId.urgent = this.urgent;
             this.task.text = this.text;
@@ -158,51 +200,8 @@ class Task {
         // Close時未保存の内容があれば警告する
         $body.on('click', '#' + this.modalId + ' ' + '.btnClose', () => {
             if (this.checkModify()) {
-                const $modalAlert = $('.modal-alert');
-                if ('content' in document.createElement('template')) {
-                    const
-                        // alertテンプレートの値を取得
-                        modalAlert = document.querySelector(
-                            '#' + this.modalId + ' .modal-alert'),
-                        template = document.querySelector('#alertTemplate'),
-                        clone = template.content.cloneNode(true);
-                    modalAlert.append(clone);
-                    // $('.modal-alert-yesno').hide();
-                    $modalAlert
-                        .removeClass('alert-hide')
-                        .addClass('alert-show');
-                    setTimeout(() => {
-                        $('.modal-alert-yesno').hide().fadeIn(300);
-                    }, 1000);
-                } else {
-                    console.log('対応してないよ');
-                }
-                const btns = '#' + this.modalId + ' .modal-footer .btn',
-                    chkDelete = '#' + this.modalId + ' ' + '.form-check-input',
-                    $attrObj = $(btns + ',' + chkDelete);
-                $attrObj.attr('disabled', 'disabled');
-
-                /**
-                 * Alertsを解除時にボタンの有効無効を再設定
-                 */
-                $body.on('click', '#' + this.modalId + ' ' + '.alertClose',
-                    () => {
-                        // modalのサイズを元に戻す。
-                        $modalAlert
-                            .removeClass('alert-show')
-                            .addClass('alert-hide');
-                        // ボタンの有効化
-                        modal.disabledBtnArea($attrObj);
-                        $('.modal-alert-yesno').remove();
-                    });
-                /**
-                 * そのまま閉じる
-                 */
-                $body.on('click', '#' + this.modalId + ' ' + '.modalClose',
-                    () => {
-                        $('.modal-alert-yesno').remove();
-                        modal.closeModal();
-                    });
+                this.showAlert(modal);
+                console.log('1');
             } else {
                 modal.closeModal();
             }
@@ -221,22 +220,25 @@ class Task {
 
     /**
      * taskをsubmit用に隠し項目として追加する
+     * @method addInput
+     * @return {HTMLElement}
      */
     addInput() {
         console.table(this.task);
         console.log(this.task);
 
         console.log(JSON.stringify(this.task));
-        $('<input>', {
-            id: 'inputItem' + this.id,
+        return $('<input>', {
+            id: this.inputItemId,
             name: 'inputItem',
             value: JSON.stringify(this.task),
             type: 'hidden',
-        }).appendTo('#formIndex');
+        });
     };
 
     /**
-     * @method
+     * @method openTask
+     * @return {void}
      */
     openTask() {
         const modal = new Modal(this.id);
@@ -244,7 +246,32 @@ class Task {
     }
 
     /**
-     * @method
+     * @method getBackGroundColor
+     * @param {number} bgNumber 色設定変数 0～2
+     * @return {string} bootstrapの背景色名
+     */
+    getBackGroundColor(bgNumber) {
+        let bg;
+        switch (bgNumber) {
+            case 0:
+                bg = 'bg-success';
+                break;
+            case 1:
+                bg = 'bg-warning';
+                break;
+            case 2:
+                bg = 'bg-danger';
+                break;
+            default:
+                bg = 'bg-warning';
+                break;
+        }
+
+        return bg;
+    }
+
+    /**
+     * @method addTask
      * @return {void}
      */
     addTask() {
@@ -259,8 +286,7 @@ class Task {
              * @desc タスクの表示色
              * {@link https://getbootstrap.com/docs/4.6/utilities/colors/#background-color}
              */
-            bgNumber = 0,
-            bg;
+            bgNumber = 0;
 
         if (this.cellId.heavy) {
             cell = '#heavyAnd';
@@ -278,20 +304,7 @@ class Task {
             bgNumber += 0;
         }
 
-        switch (bgNumber) {
-            case 0:
-                bg = 'bg-success';
-                break;
-            case 1:
-                bg = 'bg-warning';
-                break;
-            case 2:
-                bg = 'bg-danger';
-                break;
-            default:
-                bg = 'bg-warning';
-                break;
-        }
+        const bg = this.getBackGroundColor(bgNumber);
 
         // 新しいタグを作る
         $('<div>', {
@@ -299,10 +312,8 @@ class Task {
             text: this.text,
             class: bg + ' rounded-lg p-2 m-1',
         }).appendTo(cell);
-
-
-        this.addModal();
-        this.addInput();
+        if ($('#' + this.modalId).length == 0) this.addModal();
+        this.addInput().appendTo('#formIndex');
 
         /**
          * タスククリックイベント

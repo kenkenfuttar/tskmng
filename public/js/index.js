@@ -3,11 +3,10 @@
  */
 'use strict';
 
-
-const $ = require('jquery'),
+const
+    $ = require('jquery'),
     Clog = require('./log.js').Log,
     Task = require('./task.js');
-
 
 let
     /**
@@ -19,13 +18,13 @@ let
     objTask = { text: '', id: '', cellId: { heavy: '', urgent: '' } },
     /**
      * @type {number}
-     * @description タスクのid管理
+     * @desc タスクのid管理
      */
     idNumber = 0;
 
 /**
  * @type {Array<task>}
- * @description 画面内のタスクの配列
+ * @desc 画面内のタスクの配列
  */
 const tasks = [];
 
@@ -55,7 +54,8 @@ $(() => {
      * タスク追加ボタンクリックイベント
      */
     $('#btnAddTask').on('click', () => {
-        const cellId = { heavy: true, urgent: true },
+        const
+            cellId = { heavy: true, urgent: true },
             // 追加タスクのjsonオブジェクトを作る
             task = new Task($('#addText').val(), idNumber++, cellId);
         log.log(cellId);

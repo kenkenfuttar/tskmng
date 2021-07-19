@@ -42,6 +42,7 @@ class Modal {
     /**
      * ボタン群を有効化する
      * @param {string} $attrObj 有効化するオブジェクト
+     * @return {void}
      */
     disabledBtnArea($attrObj) {
         $attrObj.removeAttr('disabled');
@@ -51,11 +52,8 @@ class Modal {
     /**
      * modalを開くときの処理
      * @param {string} text タスクの文面
-     */
-    /**
-     * modalを開くときの処理
-     * @param {string} text タスクの文面
      * @param {{heavy: boolean, urgent: boolean}} cellId 表示場所のID
+     * @return {void}
      */
     openModal(text, cellId) {
         // 背景の設定
@@ -83,9 +81,11 @@ class Modal {
     /**
      * 緊急バッチの変更
      * @param {boolean} urgent 変更後の緊急フラグ
+     * @return {void}
      */
     changeUrgent(urgent) {
-        const $urgent = $('#' + this.mId + ' ' + '.urgent'),
+        const
+            $urgent = $('#' + this.mId + ' ' + '.urgent'),
             className = 'bg-white text-dark';
         if (urgent) {
             $urgent.removeClass(className);
@@ -97,9 +97,11 @@ class Modal {
     /**
      * 重要バッチの変更
      * @param {boolean} heavy 変更後の重要フラグ
+     * @return {void}
      */
     changeHeavy(heavy) {
-        const $heavy = $('#' + this.mId + ' ' + '.heavy'),
+        const
+            $heavy = $('#' + this.mId + ' ' + '.heavy'),
             className = 'bg-white';
         if (heavy) {
             $heavy.removeClass(className);
@@ -109,40 +111,14 @@ class Modal {
     }
 
     /**
-     * @desc バッヂの表示設定
-     * @param {{heavy: boolean, urgent: boolean}} cellId 表示場所のID
-     */
-    setBadge(cellId) {
-        // TODO: もう少し効率よく書けそう
-        if (cellId.heavy) {
-            if (!cellId.urgent) {
-                $('#' + this.mId + ' ' + '.urgent')
-                    .addClass('bg-white border border-danger text-dark');
-            }
-        } else {
-            if (cellId.urgent) {
-                $('#' + this.mId + ' ' + '.heavy')
-                    .addClass('bg-white border border-warning');
-            } else {
-                $('#' + this.mId + ' ' + '.urgent')
-                    .addClass('bg-white border border-danger text-dark');
-                $('#' + this.mId + ' ' + '.heavy')
-                    .addClass('bg-white border border-warning');
-            }
-        }
-    }
-
-    /**
      * @desc bodyの直下にモーダル用のtemplateタグの中身を複製する
      * @param {{heavy: boolean, urgent: boolean}} cellId 表示場所のID
      * @param {string} text タスクの表示内容
+     * {@link https://developer.mozilla.org/ja/docs/Web/HTML/Element/template}
+     * @return {void}
      */
     copyTemplate(cellId, text) {
         // $('#' + 'templateTarget').load('.\\dest\\modalTemplate.html');
-        /**
-         * {@link https://developer.mozilla.org/ja/docs/Web/HTML/Element/template}
-         * @desc id==modalTemplateの中身をbody直下に複製する
-         */
         if ('content' in document.createElement('template')) {
             console.log('対応しているよ');
             const
@@ -169,8 +145,9 @@ class Modal {
             $('#deleteCheck').attr('id', this.dId);
             $('label .form-check-label').attr('for', this.dId);
             // バッヂの設定
-            this.setBadge(cellId);
-            $('#' + this.mId + ' ' + '.form-control').val(text);
+            this.changeHeavy(cellId.heavy);
+            this.changeUrgent(cellId.urgent);
+            $('#' + this.mId + ' ' + '.txtTask').val(text);
         } else {
             console.log('対応してないよ');
         }

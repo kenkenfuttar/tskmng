@@ -21,8 +21,8 @@ class Log {
 
     /**
      * @example <caption>{string}</caption>
-     * log(hogehoge)
-     * @description this.nodeEnv == this.devがfalseになる場合logは出力されない。
+        log(hogehoge)
+     * @desc this.nodeEnv == this.devがfalseになる場合logは出力されない。
      */
     log = (nodeEnv == dev) ? console.log.bind(console) : () => { };
 }
