@@ -92,11 +92,12 @@ describe('task.js-true-true', () => {
     test('testAddInput', () => {
         console.log(task.task.text);
         document.body.innerHTML = '<div id="formIndex"></div>';
-        task.addInput();
+        // task.addInput();
 
         const
             // 結果の生成
-            received = document.body.innerHTML.replace(/&quot;/g, '\"'),
+            // received = document.body.innerHTML.replace(/&quot;/g, '\"'),
+            received = task.addInput(),
             // 期待値の生成
             expected =
                 '<div id="formIndex">' +

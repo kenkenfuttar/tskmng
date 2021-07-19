@@ -2,6 +2,8 @@
  * @file modal.js
  */
 'use strict';
+const
+    $ = require('jquery');
 
 /**
  * @class Modal

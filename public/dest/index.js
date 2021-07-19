@@ -10993,6 +10993,8 @@ module.exports.Log = Log;
  * @file modal.js
  */
 'use strict';
+const
+    $ = require('jquery');
 
 /**
  * @class Modal
@@ -11147,7 +11149,7 @@ class Modal {
 module.exports = Modal;
 
 
-},{}],5:[function(require,module,exports){
+},{"jquery":1}],5:[function(require,module,exports){
 /**
  * @file task.js
  * @author kenkenfutter <https://github.com/kenkenfuttar>
