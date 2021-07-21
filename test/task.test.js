@@ -1,6 +1,8 @@
 'use strict';
 
-const Task = require('../public/js/task.js'),
+const
+    Modal = require('../public/js/modal.js'),
+    Task = require('../public/js/task.js'),
     fs = require('fs'),
     $ = require('jquery');
 // let task;
@@ -42,27 +44,22 @@ describe('task.js-false-true', () => {
     });
 
     test('testAddInput', () => {
-        console.log(task.task.text);
-        document.body.innerHTML = '<div id="formIndex"></div>';
-        task.addInput();
-
-        const
-            // 結果の生成
-            received = document.body.innerHTML.replace(/&quot;/g, '\"'),
-            // 期待値の生成
-            expected =
-                '<div id="formIndex">' +
-                '<input id="inputItem0" name="inputItem" value="' +
-                JSON.stringify(task.task) +
-                '" type="hidden">' +
-                '</div>';
-
-        console.log(received);
-        console.log(expected);
-        console.log(task.task.text);
+        // 結果の生成
+        const received = task.addInput();
 
         // 比較の実施
-        expect(received).toBe(expected);
+        expect(received[0].getAttribute('id')).toBe('inputItem0');
+        expect(received[0].getAttribute('name')).toBe('inputItem');
+        expect(received[0].getAttribute('value'))
+            .toBe(JSON.stringify(task.task));
+        expect(received[0].getAttribute('type')).toBe('hidden');
+    });
+    test('testCheckModify', () => {
+        document.body.innerHTML =
+            fs.readFileSync(__dirname + '\\index.test.html', 'utf-8');
+        task.addTask();
+        $('.txtTask').val('a');
+        expect(task.checkModify()).toBe(true);
     });
 });
 
@@ -83,34 +80,85 @@ describe('task.js-true-true', () => {
             fs.readFileSync(__dirname + '\\index.test.html', 'utf-8');
         task.addTask();
         const expected =
-            '<div id="cellItem0" class="bg-warning rounded-lg p-2 m-1">' +
+            '<div id="cellItem0" class="bg-danger rounded-lg p-2 m-1">' +
             'test' +
             '</div>';
         expect($('#heavyAndUrgent').html()).toEqual(expected);
+        // TODO: addModalが呼ばれたことのテスト
     });
 
-    test('testAddInput', () => {
-        console.log(task.task.text);
-        document.body.innerHTML = '<div id="formIndex"></div>';
-        // task.addInput();
+    test('testCheckModify', () => {
+        document.body.innerHTML =
+            fs.readFileSync(__dirname + '\\index.test.html', 'utf-8');
+        task.addTask();
+        expect(task.checkModify()).toBe(false);
+    });
+});
 
-        const
-            // 結果の生成
-            // received = document.body.innerHTML.replace(/&quot;/g, '\"'),
-            received = task.addInput(),
-            // 期待値の生成
-            expected =
-                '<div id="formIndex">' +
-                '<input id="inputItem0" name="inputItem" value="' +
-                JSON.stringify(task.task) +
-                '" type="hidden">' +
-                '</div>';
+describe('task.js-false-false', () => {
+    let text, id, cellId, task;
+    beforeEach(() => {
+        text = 'test';
+        id = 0;
+        cellId = { heavy: false, urgent: false };
+        task = new Task(text, id, cellId);
+    });
+    afterEach(() => {
+        task = null;
+    });
 
-        console.log(received);
-        console.log(expected);
-        console.log(task.task.text);
+    test('testAddTask', () => {
+        const openTask = jest.spyOn(task, 'openTask');
 
-        // 比較の実施
-        expect(received).toBe(expected);
+        document.body.innerHTML =
+            fs.readFileSync(__dirname + '\\index.test.html', 'utf-8');
+        task.addTask();
+        const expected =
+            '<div id="cellItem0" class="bg-success rounded-lg p-2 m-1">' +
+            'test' +
+            '</div>';
+        expect($('#unheavyAndUnurgent').html()).toEqual(expected);
+        // TODO: addModalが呼ばれたことのテスト
+        $('#cellItem0').trigger('click');
+        expect(openTask).toBeCalled();
+    });
+
+    test('testOpenTask', () => {
+        document.body.innerHTML =
+            fs.readFileSync(__dirname + '\\index.test.html', 'utf-8');
+        const received = task.openTask();
+        expect(received.id).toBe(0);
+        expect(received.dId).toBe('deleteCheck0');
+        expect(received.mId).toBe('modal0');
+    });
+
+    test('testRemoveTask', () => {
+        document.body.innerHTML =
+            fs.readFileSync(__dirname + '\\index.test.html', 'utf-8');
+        task.addTask();
+        task.removeTask();
+        expect($('#inputItem0').html()).toBeUndefined();
+        expect($('#cellItem0').html()).toBeUndefined();
+        expect($('#modal0').html()).toStrictEqual(expect.anything());
+    });
+    test('testCheckModify', () => {
+        document.body.innerHTML =
+            fs.readFileSync(__dirname + '\\index.test.html', 'utf-8');
+        task.addTask();
+        task.heavy = true;
+        expect(task.checkModify()).toBe(true);
+    });
+    test('testGetBackGroundColor', () => {
+        expect(task.getBackGroundColor(0)).toBe('bg-success');
+        expect(task.getBackGroundColor(1)).toBe('bg-warning');
+        expect(task.getBackGroundColor(2)).toBe('bg-danger');
+        expect(task.getBackGroundColor(3)).toBe('bg-warning');
+        expect(task.getBackGroundColor(4)).toBe('bg-warning');
+    });
+    test('testShowAlert', () => {
+        expect($('.modal-alert-yesno').length).toBe(0);
+        const modal = new Modal(task.id);
+        task.showAlert(modal);
+        expect($('.modal-alert-yesno').length).toBe(1);
     });
 });
