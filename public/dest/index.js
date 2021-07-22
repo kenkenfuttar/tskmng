@@ -11034,7 +11034,7 @@ class Modal {
 
     /**
      * ボタン群を有効化する
-     * @param {string} $attrObj 有効化するオブジェクト
+     * @param {JQuery<HTMLElement>} $attrObj 有効化するオブジェクト
      * @return {void}
      */
     disabledBtnArea($attrObj) {
@@ -11353,7 +11353,6 @@ class Task {
         $body.on('click', '#' + this.modalId + ' ' + '.btnClose', () => {
             if (this.checkModify()) {
                 this.showAlert(modal);
-                console.log('1');
             } else {
                 modal.closeModal();
             }
@@ -11376,10 +11375,6 @@ class Task {
      * @return {HTMLElement}
      */
     addInput() {
-        console.table(this.task);
-        console.log(this.task);
-
-        console.log(JSON.stringify(this.task));
         return $('<input>', {
             id: this.inputItemId,
             name: 'inputItem',
@@ -11390,11 +11385,12 @@ class Task {
 
     /**
      * @method openTask
-     * @return {void}
+     * @return {Modal}
      */
     openTask() {
         const modal = new Modal(this.id);
         modal.openModal(this.text, this.cellId);
+        return modal;
     }
 
     /**

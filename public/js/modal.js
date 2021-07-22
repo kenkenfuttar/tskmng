@@ -43,7 +43,7 @@ class Modal {
 
     /**
      * ボタン群を有効化する
-     * @param {string} $attrObj 有効化するオブジェクト
+     * @param {JQuery<HTMLElement>} $attrObj 有効化するオブジェクト
      * @return {void}
      */
     disabledBtnArea($attrObj) {
