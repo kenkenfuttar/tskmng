@@ -17,7 +17,7 @@
     "type": "git",
     "url": "git+https://github.com/kenkenfuttar/tskmng.git"
   },
-  "author": "Kenta Futahashi",
+  "author": "kenkenfuttar",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/kenkenfuttar/tskmng/issues"
